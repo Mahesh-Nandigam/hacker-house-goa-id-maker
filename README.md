@@ -1,82 +1,82 @@
-# 🌴 Hacker House Goa 2026 — Official Frame & Builder ID Generator
+# Hacker House Goa 2026 - ID & PFP Generator
 
-> **The ultra-fast, high-aesthetic PFP Frame and Holographic Builder ID Card generator built for the 247 elite builders attending Hacker House Goa 2026 (28–31 Oct 2026).**
+Client-side badge and profile frame generator built for Hacker House Goa 2026. Generates high-resolution builder identification passes, circular avatar overlays, and 16:9 social showcase cards with real-time 3D orbit controls.
 
-[![Built for HH Goa 2026](https://img.shields.io/badge/Event-Hacker_House_Goa_2026-10b981?style=for-the-badge&logo=react)](https://hhgoa.com)
-[![247PM Studio](https://img.shields.io/badge/Organized_By-2%3A47PM_Studio-ff007a?style=for-the-badge)](https://247pm.studio)
-[![License: MIT](https://img.shields.io/badge/License-MIT-ffd700?style=for-the-badge)](LICENSE)
+Live App: https://hacker-house-goa-id-maker.vercel.app
 
----
+## Overview
 
-## ⚡ Live Features
+The application runs entirely in the browser using the HTML5 Canvas 2D API. It supports client-side image transformations, HEIC decoding for iOS uploads, and vector procedural rendering for crisp output at any resolution.
 
-- 🎭 **Dual Mode Generation:**
-  - **Format A: PFP Frame / Overlay** (Circle, Square, Hexagon avatars with dynamic curved typography and HH Goa branding).
-  - **Format B: Holographic Builder ID Card** (Event pass with photo, role, tech stack, dynamic QR code, and security hologram serial).
-- 📱 **100% Client-Side iPhone HEIC Support:** Automatically converts `.heic` and `.HEIC` files client-side using `heic2any` with zero server uploads.
-- 🎛️ **Interactive Photo Studio:** Live pan (drag-to-position), zoom slider (0.5x – 3.0x), 360° rotation, and 5 cinematic color filters (Cyber Neon, Emerald, Sunset Warm, B&W Film).
-- 🎨 **4 Curated Event Themes:**
-  1. **Emerald Jungle** (Official HH Goa Forest Green `#041d13` + Neon Pink `#ff007a` + Gold `#ffd700`)
-  2. **Cyberpunk Neon** (Electric Cyan `#00f2fe` + Violet `#7928ca` + Hot Pink `#ff007a`)
-  3. **Sunset Beach** (Goa Sunset Red `#ff5e62` + Golden Peach `#ff9966`)
-  4. **Terminal Matrix** (Hacker Phosphor Green `#00ff66` + HUD Brackets)
-- 🎲 **AI Builder Title Randomizer:** 1-click generator for titles like *“Autonomous Agent Whisperer”*, *“DeFi Liquidity Alchemist”*, *“10x Vibecoder”*.
-- 🔊 **Tactile Sound Effects & Haptics:** Pure Web Audio API synthesis for retro-tactile clicks, rolls, and triumph chimes.
-- 🪪 **Interactive 3D Holographic Perspective:** Real-time mouse/touch tilt effect mimicking reflective event badges.
-- 🚀 **1-Click Share to X (Twitter):** Pre-filled viral tweet with `#FrameInGoa`, `#HackerHouseGoa`, and `@247pmstudio`.
-- 💾 **4K Ultra-HD Export:** Crystal clear 2000x2000px and 1200x1600px PNG downloads with celebration confetti.
+## Features
 
----
+- Format Options:
+  - Builder ID Card: Dual-sided pass (998 x 1436 px) with photo clipping, verification QR code, security hash, and laser barcode.
+  - PFP Frame: Circular avatar badge (1024 x 1024 px) with proportional curved typography.
+  - 16:9 Showcase: Combined front/back presentation canvas (2400 x 1350 px) formatted for X timeline posts.
+- Interactive 3D Preview: Pointer and touch drag-to-spin controls with momentum decay and realistic tilt physics.
+- Image Editor: Client-side crop, zoom (0.5x - 3.0x), 360-degree rotation, and 2D pan controls.
+- File Format Support: Supports PNG, JPG, WEBP, AVIF, and Apple HEIC (converted client-side via heic2any).
+- Dynamic QR Generation: Generates scannable Devfolio verification links per badge.
+- Audio Synthesis: Procedural UI click and feedback sounds synthesized via Web Audio API without external audio assets.
+- Export Formats: High-resolution PNG exports with zero server-side processing.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-- **Core:** HTML5 Canvas 2D API, JavaScript (ES6+ Modules)
-- **Styling:** Tailwind CSS v4, Glassmorphism, CSS 3D Perspective
-- **Image Processing:** `heic2any` (Client-side Apple HEIC conversion)
-- **Audio:** Web Audio API (Zero external MP3 dependencies)
-- **QR Code:** `qrcode` Canvas Vector Engine
-- **Visuals & FX:** `canvas-confetti`
-- **Build Tool:** Vite 6
+- Runtime: Vanilla JavaScript (ES Modules)
+- Styling: Tailwind CSS v4, CSS 3D Transforms
+- Canvas Engine: HTML5 Canvas 2D API
+- QR Engine: qrcode
+- Image Decoder: heic2any
+- FX: canvas-confetti
+- Bundler: Vite 6
 
----
+## Project Structure
 
-## 🚀 Quick Start (Local Development)
+```
+hhgoa-frame-generator/
+├── index.html          # Main application markup and studio interface
+├── src/
+│   ├── generator.js    # Canvas rendering engine and vector drawing routines
+│   ├── main.js         # UI state management, 3D orbit engine, and file handlers
+│   ├── sound.js        # Web Audio API procedural sound synthesizer
+│   └── style.css       # Layout styles, 3D perspective, and theme definitions
+├── public/             # Static assets and sample avatars
+├── package.json
+└── vite.config.js
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18.0.0 or higher
+- npm 9.0.0 or higher
+
+### Installation
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/your-username/hhgoa-frame-generator.git
-
-# 2. Enter directory
-cd hhgoa-frame-generator
-
-# 3. Install dependencies
+git clone https://github.com/Mahesh-Nandigam/hacker-house-goa-id-maker.git
+cd hacker-house-goa-id-maker
 npm install
+```
 
-# 4. Start local dev server
+### Development
+
+```bash
 npm run dev
 ```
 
-Open `http://localhost:3000` in your browser.
+The development server starts at `http://localhost:3000`.
 
----
+### Production Build
 
-## 🌐 1-Click Deployment (Vercel / Netlify)
+```bash
+npm run build
+```
 
-### Deploying to Vercel:
-1. Push this folder to a GitHub repository.
-2. Go to [vercel.com/new](https://vercel.com/new).
-3. Import your repository and click **Deploy**.
-4. You will receive an instant live URL (e.g., `https://hhgoa-frame-generator.vercel.app`)!
+The production output is generated in the `dist/` directory.
 
----
+## License
 
-## 📄 Submission Details
-
-- **Event:** Hacker House Goa 2026 (28–31 Oct 2026)
-- **Task:** Shortlisting Task 1 — Build a Frame / ID Card Generator
-- **Hashtag:** `#FrameInGoa`
-- **Organizers:** [@247pmstudio](https://twitter.com/247pmstudio)
-
----
-
-Crafted with ❤️ by **Mahesh Babu** for **Hacker House Goa 2026**.
+MIT
