@@ -81,13 +81,6 @@ html, body {
   transform: rotateY(180deg);
 }
 
-/* PFP Disc mode adjustments */
-.card-flipper.is-disc #canvasFront {
-  border-radius: 9999px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 40px rgba(23, 160, 85, 0.35);
-  aspect-ratio: 1 / 1;
-}
-
 /* Canvas Display Scaling - Strictly bounded to prevent overflowing */
 #canvasFront, #canvasBack {
   display: block;
@@ -95,7 +88,7 @@ html, body {
   max-height: 410px;
   width: auto;
   height: auto;
-  aspect-ratio: 998 / 1436;
+  aspect-ratio: 1200 / 1800;
   object-fit: contain;
 }
 
@@ -109,96 +102,11 @@ html, body {
   color: #ffffff;
 }
 
-/* Timeline Flow Component */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.timeline-tab {
-  padding: 6px 14px;
-  border-radius: 9999px;
-  border: 1px solid rgba(254, 252, 232, 0.12);
-  background: #061e11;
-  color: rgba(254, 252, 232, 0.6);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-.timeline-tab:hover {
-  color: #fefce8;
-  border-color: #fdd302;
-}
-.timeline-tab.active {
-  background: #fdd302;
-  color: #04120a;
-  border-color: #fdd302;
-  box-shadow: 0 0 14px rgba(253, 211, 2, 0.45);
-}
-
-.timeline-track {
-  display: flex;
-  gap: 1.25rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding: 0.5rem 0.25rem 1.5rem;
-  scroll-behavior: smooth;
-}
-
-.timeline-day {
-  flex: 0 0 100%;
-  max-width: 100%;
-  scroll-snap-align: start;
-  position: relative;
-}
-@media (min-width: 640px) {
-  .timeline-day {
-    flex: 0 0 calc(50% - 0.625rem);
-    max-width: calc(50% - 0.625rem);
-  }
-}
-@media (min-width: 1024px) {
-  .timeline-day {
-    flex: 0 0 calc(50% - 0.625rem);
-    max-width: calc(50% - 0.625rem);
-  }
-}
-
-.timeline-rail {
-  position: relative;
-  height: 2px;
-  background: rgba(254, 252, 232, 0.1);
-  margin-bottom: 1rem;
-}
-.timeline-dot {
-  position: absolute;
-  top: -5px;
-  left: 1.5rem;
-  width: 12px;
-  height: 12px;
-  border-radius: 9999px;
-  background: var(--dot-color, #fdd302);
-  box-shadow: 0 0 12px var(--dot-color, #fdd302);
-}
-
-.timeline-card {
-  border-radius: 1rem;
-  border: 1px solid rgba(254, 252, 232, 0.1);
-  background: rgba(6, 30, 17, 0.85);
-  backdrop-filter: blur(12px);
-  padding: 1.25rem;
-  transition: all 0.2s ease;
-}
-.timeline-card:hover {
-  border-color: rgba(253, 211, 2, 0.4);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+/* Shape buttons */
+.shape-btn.active {
+  border-color: #10b981;
+  background: rgba(2, 103, 51, 0.4);
+  color: #ffffff;
 }
 
 /* Custom Scrollbar */
@@ -226,4 +134,112 @@ input[type="range"]::-webkit-slider-thumb {
   background: #fdd302;
   cursor: pointer;
   box-shadow: 0 0 8px rgba(253, 211, 2, 0.8);
+}
+
+/* PFP Mode: front-only floating disc — gentle idle bob so it reads as
+   a hovering object rather than a static flat frame */
+.card-flipper.is-disc {
+  animation: discFloat 4.5s ease-in-out infinite;
+}
+@keyframes discFloat {
+  0%, 100% { margin-top: 0px; }
+  50% { margin-top: -10px; }
+}
+
+/* Hide scrollbar on the day-jump tab strip without hiding scroll behavior */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Day-jump pill tabs above the flow timeline */
+.timeline-tab {
+  flex-shrink: 0;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  border: 1px solid rgba(254, 252, 232, 0.12);
+  background: #021008;
+  color: rgba(254, 252, 232, 0.55);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.timeline-tab:hover {
+  color: #fefce8;
+  border-color: rgba(253, 211, 2, 0.4);
+}
+.timeline-tab.active {
+  background: #fdd302;
+  color: #04120a;
+  border-color: #fdd302;
+  box-shadow: 0 0 14px rgba(253, 211, 2, 0.45);
+}
+
+/* Horizontal scroll-snap flow timeline */
+.timeline-track {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 0.5rem 1.5rem 1.25rem;
+  margin: 0 -1.5rem;
+  scroll-padding-left: 1.5rem;
+}
+.timeline-day {
+  scroll-snap-align: start;
+  flex: 0 0 min(88vw, 340px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.timeline-rail {
+  position: relative;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(253, 211, 2, 0.15), rgba(253, 211, 2, 0.6), rgba(253, 211, 2, 0.15));
+}
+.timeline-dot {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--dot-color, #fdd302);
+  box-shadow: 0 0 10px var(--dot-color, #fdd302);
+  transform: translate(-2px, -50%);
+}
+.timeline-card {
+  flex: 1;
+  border-radius: 1rem;
+  border: 1px solid rgba(254, 252, 232, 0.12);
+  background: rgba(6, 30, 17, 0.8);
+  backdrop-filter: blur(6px);
+  padding: 1.25rem;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.timeline-day:hover .timeline-card {
+  border-color: rgba(253, 211, 2, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Vertical stack on very narrow screens, since a 4-up horizontal scroll
+   is cramped below ~420px — the flow becomes a simple top-to-bottom rail */
+@media (max-width: 420px) {
+  .timeline-track {
+    flex-direction: column;
+    overflow-x: visible;
+    scroll-snap-type: none;
+    margin: 0;
+    padding: 0.5rem 0 1.25rem;
+  }
+  .timeline-day {
+    flex: 1 1 auto;
+  }
 }
