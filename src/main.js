@@ -14,7 +14,7 @@ const state = {
   name: 'Ada Lovelace',
   role: 'AI Engineer',
   teamName: 'XENOX',
-  serial: '#GOA-2026-8704',
+  serial: '#GOA-2026-8704A',
   qrUrl: 'https://hacker-house-goa-2026.devfolio.co/'
 };
 
@@ -227,7 +227,6 @@ function animate3D() {
   } else if (!isCardDragging && Math.abs(spinVelocity) > 0.05) {
     rotationY += spinVelocity;
     spinVelocity *= 0.93;
-    // Ease the tilt back to level once the drag/inertia settles
     tiltX *= 0.9;
     apply3DRotation();
   } else if (!isCardDragging && Math.abs(tiltX) > 0.05) {
@@ -256,8 +255,6 @@ window.addEventListener('mousemove', (e) => {
   const deltaY = e.clientY - lastPointerY;
   spinVelocity = deltaX * 0.45;
   rotationY += spinVelocity;
-  // Subtle realistic tilt on the vertical axis, clamped so the disc/card
-  // never flips upside-down — just gives it that floating-disc feel.
   tiltX = Math.max(-18, Math.min(18, tiltX - deltaY * 0.35));
   lastPointerX = e.clientX;
   lastPointerY = e.clientY;
@@ -328,7 +325,6 @@ btnAutoSpin.addEventListener('click', () => {
   }
 });
 
-// Card Face refs (front is shared by Card + PFP canvas; back only used in Card mode)
 const cardBackFace = document.getElementById('cardBackFace');
 
 // Mode Switch (Card vs PFP)
@@ -362,8 +358,6 @@ function setMode(mode) {
     btnDownloadBoth.classList.add('hidden');
     btnDownloadFront.innerText = 'Download PFP';
     flipInstructionText.innerText = 'Drag to spin the disc • Front-only 3D frame, ready for X & LinkedIn';
-    // PFP is a front-only floating disc — hide the (stale) card-back face
-    // entirely so a drag never reveals leftover card-back artwork.
     cardBackFace.classList.add('hidden');
     card3dObject.classList.add('is-disc');
     rotationY = 0;
@@ -606,13 +600,10 @@ btnDownloadBoth.addEventListener('click', () => {
   triggerDownload(canvas, `HHGoa2026_BothSides_${(state.name || 'Builder').replace(/\s+/g, '_')}.png`);
 });
 
-// Share to X
+// Share to X (Option 3 Pure Human Vibe)
 btnShareX.addEventListener('click', () => {
   sound.click();
-  const name = state.name || 'a builder';
-  const team = state.teamName ? `From Team ${state.teamName}\n` : '';
-  const serial = state.serial || '#GOA-2026-8704';
-  const tweetText = `Hey there, Here is my Hacker House Goa 26 ID Card! 🪪\n\nI'm ${name}\n${team}Builder ID: ${serial}\n\nSee you all in Goa. 🌴☀️🚀\n\nCreate your own Card:\nhttps://hhgoa26-id.vercel.app/\n\n#FrameInGoa #HHGoa2026`;
+  const tweetText = `ready for Hacker House Goa 🪪\n\ncooked up a custom 3D builder ID maker for the squad.\n\ntry it here and flex yours:\nhttps://hacker-house-goa-id-maker.vercel.app/\n\n#FrameInGoa @247pmstudio`;
 
   const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
   window.open(tweetUrl, '_blank', 'noopener,noreferrer');
