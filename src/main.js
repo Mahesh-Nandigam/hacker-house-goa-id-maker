@@ -595,64 +595,16 @@ btnDownloadBoth.addEventListener('click', () => {
 });
 
 // =========================================================================
-// NATIVE SHARING WITH AUTO-ATTACHED PRE-RENDERED IMAGE
+// DIRECT SHARE TO X (Zero popups, instant new tab)
 // =========================================================================
-btnShareX.addEventListener('click', async () => {
+btnShareX.addEventListener('click', () => {
   sound.click();
 
-  const shareText = `ready for Hacker House Goa 🪪\n\ncooked up a custom 3D builder ID maker for the squad.\n\ntry it here and flex yours:\nhttps://hacker-house-goa-id-maker.vercel.app/\n\n#FrameInGoa @247pmstudio`;
-  const shareUrl = 'https://hacker-house-goa-id-maker.vercel.app/';
+  const tweetText = `ready for Hacker House Goa 🪪\n\ncooked up a custom 3D builder ID maker for the squad.\n\ntry it here and flex yours:\nhttps://hacker-house-goa-id-maker.vercel.app/\n\n#FrameInGoa @247pmstudio`;
+  const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
 
-  // Render the official showcase canvas
-  const canvas = state.mode === 'card' 
-    ? generator.renderXPostShowcase(state)
-    : generator.renderPFP(state, 2.0);
-
-  canvas.toBlob(async (blob) => {
-    if (!blob) return;
-
-    const filename = `HHGoa2026_Pass_${(state.name || 'Builder').replace(/\s+/g, '_')}.png`;
-    const file = new File([blob], filename, { type: 'image/png' });
-
-    // 1. Try Native Web Share API with attached image file (like official HH Goa video)
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({
-          title: 'Hacker House Goa 2026 Builder Pass',
-          text: shareText,
-          url: shareUrl,
-          files: [file]
-        });
-        showToast('Shared with image attached!', '🚀');
-        return;
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          console.warn('Native share error, falling back to clipboard + X intent', err);
-        } else {
-          return;
-        }
-      }
-    }
-
-    // 2. Desktop Fallback: Copy image to clipboard + Auto-download + Open X Compose
-    try {
-      if (navigator.clipboard && window.ClipboardItem) {
-        await navigator.clipboard.write([
-          new ClipboardItem({ 'image/png': blob })
-        ]);
-        showToast('Image copied to clipboard! Paste (Ctrl+V) in your tweet 📋', '📸');
-      }
-    } catch (e) {
-      console.warn('Clipboard write error', e);
-    }
-
-    // Auto-trigger image download so the file is ready in user downloads
-    triggerDownload(canvas, filename);
-
-    // Open X Intent with pre-filled text
-    const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
-    window.open(tweetUrl, '_blank', 'noopener,noreferrer');
-  }, 'image/png');
+  window.open(tweetUrl, '_blank', 'noopener,noreferrer');
+  showToast('Opening X with official caption...', '🐦');
 });
 
 // Initialize on Load
