@@ -5,8 +5,8 @@ import heic2any from 'heic2any';
 
 // App State
 const state = {
-  activePage: 'maker', // Direct to studio by default
-  mode: 'card', // 'card' | 'pfp'
+  activePage: 'maker',
+  mode: 'card',
   zoom: 1.0,
   rotate: 0,
   panX: 0,
@@ -92,12 +92,10 @@ function showToast(msg, icon = '✨') {
   setTimeout(() => {
     toast.classList.remove('translate-y-0', 'opacity-100');
     toast.classList.add('translate-y-20', 'opacity-0');
-  }, 2200);
+  }, 2500);
 }
 
-// ----------------------------------------------------
-// PAGE NAVIGATION ROUTER
-// ----------------------------------------------------
+// Page Navigation
 function navigateTo(pageId) {
   state.activePage = pageId;
   sound.click();
@@ -131,7 +129,7 @@ navTabMaker.addEventListener('click', () => navigateTo('maker'));
 navTabSchedule.addEventListener('click', () => navigateTo('schedule'));
 btnHeroCreate.addEventListener('click', () => navigateTo('maker'));
 
-// Global Persona Loader (exposed on window for quick-fill onclick handlers)
+// Global Persona Loader
 window.loadPersona = (name, role, team) => {
   state.name = name;
   state.role = role;
@@ -169,9 +167,7 @@ function updateCountdown() {
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
-// ----------------------------------------------------
-// CANVAS RENDERING
-// ----------------------------------------------------
+// Canvas Rendering
 async function render() {
   if (state.mode === 'card') {
     const frontOutput = generator.renderCardFront(state, 0.75);
@@ -194,9 +190,7 @@ async function render() {
   }
 }
 
-// ----------------------------------------------------
-// 3D ORBIT & DRAG-TO-SPIN ENGINE
-// ----------------------------------------------------
+// 3D Orbit Engine
 let rotationY = 0;
 let tiltX = 0;
 let autoSpinActive = false;
@@ -237,7 +231,7 @@ function animate3D() {
 }
 requestAnimationFrame(animate3D);
 
-// Drag Handlers for 3D Orbit (Both Card & PFP)
+// Drag Handlers
 card3dScene.addEventListener('mousedown', (e) => {
   if (e.target.tagName === 'BUTTON') return;
   isCardDragging = true;
@@ -267,7 +261,7 @@ window.addEventListener('mouseup', () => {
   card3dObject.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
 });
 
-// Touch Handlers (Mobile Support)
+// Touch Handlers
 card3dScene.addEventListener('touchstart', (e) => {
   if (e.touches.length !== 1) return;
   isCardDragging = true;
@@ -327,7 +321,7 @@ btnAutoSpin.addEventListener('click', () => {
 
 const cardBackFace = document.getElementById('cardBackFace');
 
-// Mode Switch (Card vs PFP)
+// Mode Switch
 function setMode(mode) {
   state.mode = mode;
   sound.click();
@@ -562,7 +556,7 @@ soundToggleBtn.addEventListener('click', () => {
   showToast(enabled ? 'Sound FX Enabled' : 'Sound FX Muted', enabled ? '🔊' : '🔇');
 });
 
-// Download Handlers
+// Download Helper
 function triggerDownload(canvas, filename) {
   sound.success();
 
@@ -600,14 +594,65 @@ btnDownloadBoth.addEventListener('click', () => {
   triggerDownload(canvas, `HHGoa2026_BothSides_${(state.name || 'Builder').replace(/\s+/g, '_')}.png`);
 });
 
-// Share to X (Option 3 Pure Human Vibe)
-btnShareX.addEventListener('click', () => {
+// =========================================================================
+// NATIVE SHARING WITH AUTO-ATTACHED PRE-RENDERED IMAGE
+// =========================================================================
+btnShareX.addEventListener('click', async () => {
   sound.click();
-  const tweetText = `ready for Hacker House Goa 🪪\n\ncooked up a custom 3D builder ID maker for the squad.\n\ntry it here and flex yours:\nhttps://hacker-house-goa-id-maker.vercel.app/\n\n#FrameInGoa @247pmstudio`;
 
-  const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
-  window.open(tweetUrl, '_blank', 'noopener,noreferrer');
-  showToast('Opening X with official caption...', '🐦');
+  const shareText = `ready for Hacker House Goa 🪪\n\ncooked up a custom 3D builder ID maker for the squad.\n\ntry it here and flex yours:\nhttps://hacker-house-goa-id-maker.vercel.app/\n\n#FrameInGoa @247pmstudio`;
+  const shareUrl = 'https://hacker-house-goa-id-maker.vercel.app/';
+
+  // Render the official showcase canvas
+  const canvas = state.mode === 'card' 
+    ? generator.renderXPostShowcase(state)
+    : generator.renderPFP(state, 2.0);
+
+  canvas.toBlob(async (blob) => {
+    if (!blob) return;
+
+    const filename = `HHGoa2026_Pass_${(state.name || 'Builder').replace(/\s+/g, '_')}.png`;
+    const file = new File([blob], filename, { type: 'image/png' });
+
+    // 1. Try Native Web Share API with attached image file (like official HH Goa video)
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          title: 'Hacker House Goa 2026 Builder Pass',
+          text: shareText,
+          url: shareUrl,
+          files: [file]
+        });
+        showToast('Shared with image attached!', '🚀');
+        return;
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.warn('Native share error, falling back to clipboard + X intent', err);
+        } else {
+          return;
+        }
+      }
+    }
+
+    // 2. Desktop Fallback: Copy image to clipboard + Auto-download + Open X Compose
+    try {
+      if (navigator.clipboard && window.ClipboardItem) {
+        await navigator.clipboard.write([
+          new ClipboardItem({ 'image/png': blob })
+        ]);
+        showToast('Image copied to clipboard! Paste (Ctrl+V) in your tweet 📋', '📸');
+      }
+    } catch (e) {
+      console.warn('Clipboard write error', e);
+    }
+
+    // Auto-trigger image download so the file is ready in user downloads
+    triggerDownload(canvas, filename);
+
+    // Open X Intent with pre-filled text
+    const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+    window.open(tweetUrl, '_blank', 'noopener,noreferrer');
+  }, 'image/png');
 });
 
 // Initialize on Load
@@ -620,9 +665,7 @@ async function init() {
 
 init();
 
-// ----------------------------------------------------
-// FLOW TIMELINE: day-jump tabs <-> horizontal scroll-snap track
-// ----------------------------------------------------
+// Flow Timeline Tabs & Scroll
 const timelineTrack = document.getElementById('timelineTrack');
 const timelineTabs = document.querySelectorAll('.timeline-tab');
 const timelineDays = document.querySelectorAll('.timeline-day');
