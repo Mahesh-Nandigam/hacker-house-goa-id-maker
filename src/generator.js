@@ -1,14 +1,30 @@
 import QRCode from 'qrcode';
 
-// Exact Palette from Hacker House Goa
+// Luxury Goan Color Tokens
 export const PALETTE = {
   green: "#026733",
   greenDeep: "#014f2e",
   greenInk: "#01351f",
   yellow: "#fdd302",
+  gold: "#ffd700",
   pink: "#eb0471",
+  neonPink: "#ff007a",
   cyan: "#00f2fe",
-  cream: "#fef7e6"
+  cream: "#fef7e6",
+  darkBg: "#021008"
+};
+
+// Exact Industry Standard Dimensions
+export const DIMENSIONS = {
+  card: { w: 998, h: 1436 },
+  pfp: { size: 1024 },
+  slot: { x: 387, y: 52, w: 224, h: 46, radius: 23 },
+  photo: { x: 234, y: 360, w: 530, h: 510, rx: 265, ry: 140, inset: 10 },
+  namePlate: { x: 74, y: 890, w: 850, h: 136, radius: 32, inset: 8 },
+  rolePill: { x: 249, y: 1042, w: 500, h: 76, radius: 38 },
+  serialSlot: { cx: 499, y: 1132 },
+  hashtagSlot: { cx: 499, y: 860 },
+  qrSlot: { x: 384, y: 1180, size: 230, radius: 22 }
 };
 
 export const EVENT = {
@@ -19,20 +35,6 @@ export const EVENT = {
   tagline: "4 DAYS IN GOA • 247 BUILDERS • BUILT TO SHIP",
   hashtag: "#FrameInGoa",
   studio: "2:47PM STUDIO"
-};
-
-export const DIMENSIONS = {
-  card: { w: 998, h: 1436 },
-  pfp: { size: 1024 },
-  slot: { x: 387, y: 56, w: 224, h: 48, radius: 24 },
-  photo: { x: 244, y: 380, w: 510, h: 490, rx: 255, ry: 135, inset: 8 },
-  namePlate: { x: 74, y: 885, w: 850, h: 140, radius: 34, inset: 8 },
-  rolePill: { x: 249, y: 1035, w: 500, h: 80, radius: 40 },
-  serialSlot: { cx: 499, y: 1125 },
-  hashtagSlot: { cx: 499, y: 855 },
-  qrSlot: { x: 384, y: 1175, size: 230, radius: 22 },
-  pfpWindow: { x: 132, y: 195, size: 760 },
-  pfpPill: { cx: 512, y: 840, w: 640, h: 90, radius: 45 }
 };
 
 // Canvas Helper Functions
@@ -217,13 +219,13 @@ export class GraphicGenerator {
       });
       this.qrImage = img;
     } catch (e) {
-      console.warn('QR error', e);
+      console.warn('QR generation error', e);
     }
   }
 
   // =========================================================================
   // FORMAT B: BUILDER ID CARD - FRONT (998 x 1436 px)
-  // 100% CUSTOM VECTOR MASTERPIECE
+  // HIGH-END PRODUCTION-READY EDITION
   // =========================================================================
   renderCardFront(state, scale = 1.0) {
     const canvas = document.createElement('canvas');
@@ -243,50 +245,51 @@ export class GraphicGenerator {
     ctx.imageSmoothingQuality = 'high';
     ctx.scale(scale, scale);
 
-    // 1. Rich Goan Emerald Gradient Base
+    // 1. Luxury Emerald Gradient Background
     const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
-    bgGrad.addColorStop(0, '#042b1a');
-    bgGrad.addColorStop(0.4, '#021e12');
-    bgGrad.addColorStop(1, '#01120a');
+    bgGrad.addColorStop(0, '#042817');
+    bgGrad.addColorStop(0.35, '#021e11');
+    bgGrad.addColorStop(0.75, '#01160c');
+    bgGrad.addColorStop(1, '#010c07');
     ctx.fillStyle = bgGrad;
     roundRectPath(ctx, 0, 0, w, h, 28);
     ctx.fill();
 
-    // Outer Gold Double Border
+    // 2. Gold Metallic Precision Double Border
     ctx.lineWidth = 6;
     ctx.strokeStyle = PALETTE.yellow;
     roundRectPath(ctx, 12, 12, w - 24, h - 24, 20);
     ctx.stroke();
 
     ctx.lineWidth = 1.5;
-    ctx.strokeStyle = 'rgba(253, 211, 2, 0.4)';
-    roundRectPath(ctx, 24, 24, w - 48, h - 48, 14);
+    ctx.strokeStyle = 'rgba(253, 211, 2, 0.45)';
+    roundRectPath(ctx, 22, 22, w - 44, h - 44, 14);
     ctx.stroke();
 
-    // 2. Header Strip: 2:47PM STUDIO • 28 - 31 OCT 2026 // GOA, INDIA
+    // 3. Header Details
     ctx.save();
     ctx.font = '800 20px "JetBrains Mono", monospace';
     ctx.fillStyle = PALETTE.yellow;
-    ctx.fillText('2:47PM STUDIO', 60, 120);
+    ctx.fillText('2:47PM STUDIO', 60, 115);
 
     ctx.textAlign = 'right';
     ctx.font = '700 18px "Space Grotesk", sans-serif';
-    ctx.fillText('28 – 31 OCT 2026 // GOA, INDIA', w - 60, 120);
+    ctx.fillText('28 – 31 OCT 2026 // GOA, INDIA', w - 60, 115);
     ctx.restore();
 
-    // 3. Main Wordmark: HACKER [गोवा] HOUSE
-    const titleY = 190;
+    // 4. Main Event Wordmark: HACKER [गोवा] HOUSE
+    const titleY = 185;
     this.drawTitleBlock(ctx, w / 2, titleY);
 
-    // 4. Subtitle: 4 DAYS IN GOA • 247 BUILDERS • BUILT TO SHIP
+    // 5. Subtitle Tagline
     ctx.save();
     ctx.textAlign = 'center';
     ctx.font = '700 16px "Space Grotesk", sans-serif';
-    ctx.fillStyle = 'rgba(254, 247, 230, 0.85)';
-    drawTracked(ctx, '4 DAYS IN GOA  ◆  247 BUILDERS  ◆  BUILT TO SHIP', w / 2, titleY + 68, 2.5);
+    ctx.fillStyle = 'rgba(254, 247, 230, 0.9)';
+    drawTracked(ctx, '4 DAYS IN GOA  ◆  247 BUILDERS  ◆  BUILT TO SHIP', w / 2, titleY + 68, 2.4);
     ctx.restore();
 
-    // 5. Arch Photo Window & Goan Scenery (Palm trees, Umbrella & Vespa)
+    // 6. Arch Photo Window & Vector Goan Scenery
     const p = DIMENSIONS.photo;
     this.drawArchScenery(ctx, p.x, p.y, p.w, p.h);
 
@@ -317,10 +320,10 @@ export class GraphicGenerator {
     ctx.stroke();
     ctx.restore();
 
-    // 6. #FrameInGoa Ribbon Banner across Arch Base
+    // 7. #FrameInGoa Ribbon Banner across Arch Base
     this.drawRibbonBanner(ctx, DIMENSIONS.hashtagSlot.cx, DIMENSIONS.hashtagSlot.y, '#FrameInGoa');
 
-    // 7. Full Name Display Box
+    // 8. Name Plate Container
     const np = DIMENSIONS.namePlate;
     const nameBox = {
       x: np.x + np.inset,
@@ -351,7 +354,7 @@ export class GraphicGenerator {
     drawTracked(ctx, builderName, nameBox.x + nameBox.w / 2, nameBox.y + nameBox.h / 2 + 3, fittedName.tracking);
     ctx.restore();
 
-    // 8. Role Badge Pill
+    // 9. Role Badge Pill
     const rp = DIMENSIONS.rolePill;
     const roleStr = (state.role || 'AI ENGINEER').toUpperCase();
     ctx.save();
@@ -365,7 +368,7 @@ export class GraphicGenerator {
     const fittedRole = fitTracked(ctx, `❖  ${roleStr}  ❖`, rp.w - 30, {
       family: '"Space Grotesk", sans-serif',
       weight: '900',
-      maxSize: 40,
+      maxSize: 38,
       minSize: 18,
       tracking: 3
     });
@@ -374,7 +377,7 @@ export class GraphicGenerator {
     drawTracked(ctx, `❖  ${roleStr}  ❖`, rp.x + rp.w / 2, rp.y + rp.h / 2 + 2, fittedRole.tracking);
     ctx.restore();
 
-    // 9. Serial Line & Squad
+    // 10. Serial Line & Squad
     const serialStr = state.serial || `#GOA-2026-${Math.abs(this.hashCode(state.name || 'BUILDER')).toString(16).toUpperCase().padStart(4, '0')}A`;
     const teamStr = (state.teamName || '').toUpperCase();
     const fullSerial = teamStr ? `${teamStr}  ·  ${serialStr}` : serialStr;
@@ -384,7 +387,7 @@ export class GraphicGenerator {
     ctx.textBaseline = 'middle';
     const serialW = Math.min(measureTracked(ctx, fullSerial, 2.2) + 48, 680);
     roundRectPath(ctx, DIMENSIONS.serialSlot.cx - serialW / 2, DIMENSIONS.serialSlot.y, serialW, 44, 22);
-    ctx.fillStyle = 'rgba(1, 53, 31, 0.88)';
+    ctx.fillStyle = 'rgba(1, 53, 31, 0.9)';
     ctx.fill();
     ctx.lineWidth = 2;
     ctx.strokeStyle = 'rgba(253, 211, 2, 0.85)';
@@ -393,9 +396,9 @@ export class GraphicGenerator {
     drawTracked(ctx, fullSerial, DIMENSIONS.serialSlot.cx, DIMENSIONS.serialSlot.y + 22 + 1, 2.2);
     ctx.restore();
 
-    // 10. Resort Scenery + Scannable QR Code Panel
+    // 11. Resort Bungalows Scenery + Scannable QR Code Panel
     const qrP = DIMENSIONS.qrSlot;
-    this.drawResortBungalows(ctx, 48, 1140, w - 96, 240);
+    this.drawResortBungalows(ctx, 48, 1145, w - 96, 240);
 
     ctx.save();
     roundRectPath(ctx, qrP.x, qrP.y, qrP.size, qrP.size, qrP.radius);
@@ -410,10 +413,10 @@ export class GraphicGenerator {
     }
     ctx.restore();
 
-    // 11. Bottom Portuguese Azulejo Mosaic Tile Band
+    // 12. Bottom Portuguese Azulejo Mosaic Tile Band
     this.drawAzulejoMosaicBand(ctx, 36, h - 48, w - 72, 24);
 
-    // 12. Top Lanyard Slot Cutout
+    // 13. Top Lanyard Slot Cutout
     ctx.save();
     ctx.globalCompositeOperation = 'destination-out';
     const s = DIMENSIONS.slot;
@@ -449,9 +452,10 @@ export class GraphicGenerator {
 
     // 1. Dark Emerald Background Base
     const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
-    bgGrad.addColorStop(0, '#042b1a');
-    bgGrad.addColorStop(0.4, '#021e12');
-    bgGrad.addColorStop(1, '#01120a');
+    bgGrad.addColorStop(0, '#042817');
+    bgGrad.addColorStop(0.35, '#021e11');
+    bgGrad.addColorStop(0.75, '#01160c');
+    bgGrad.addColorStop(1, '#010c07');
     ctx.fillStyle = bgGrad;
     roundRectPath(ctx, 0, 0, w, h, 28);
     ctx.fill();
@@ -577,7 +581,6 @@ export class GraphicGenerator {
 
   // =========================================================================
   // FORMAT A: PFP FRAME OVERLAY (1024 x 1024 px)
-  // 100% CUSTOM VECTOR MASTERPIECE
   // =========================================================================
   renderPFP(state, scale = 1.0) {
     const canvas = document.createElement('canvas');
