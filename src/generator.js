@@ -207,7 +207,6 @@ export function drawBarcode(ctx, text, x, y, w, h) {
   const rand = seededRandom(hash);
 
   ctx.save();
-  // White scan panel
   roundRectPath(ctx, x - 14, y - 10, w + 28, h + 20, 8);
   ctx.fillStyle = '#ffffff';
   ctx.fill();
@@ -215,7 +214,6 @@ export function drawBarcode(ctx, text, x, y, w, h) {
   ctx.strokeStyle = 'rgba(1, 53, 31, 0.25)';
   ctx.stroke();
 
-  // Cyan laser glow
   ctx.save();
   ctx.shadowColor = 'rgba(0, 242, 254, 0.55)';
   ctx.shadowBlur = 6;
@@ -232,7 +230,6 @@ export function drawBarcode(ctx, text, x, y, w, h) {
   }
   ctx.restore();
 
-  // Cyan scan line
   ctx.strokeStyle = 'rgba(0, 242, 254, 0.9)';
   ctx.lineWidth = 1;
   ctx.beginPath();
@@ -316,7 +313,7 @@ export class GraphicGenerator {
     ctx.imageSmoothingQuality = 'high';
     ctx.scale(scale, scale);
 
-    // 1. Luxury Emerald Gradient Background
+    // 1. Luxury Emerald Gradient Background with Cyber Lattice
     const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
     bgGrad.addColorStop(0, '#042817');
     bgGrad.addColorStop(0.35, '#021e11');
@@ -359,9 +356,9 @@ export class GraphicGenerator {
     drawTracked(ctx, '4 DAYS IN GOA  ◆  247 BUILDERS  ◆  BUILT TO SHIP', w / 2, titleY + 68, 2.4);
     ctx.restore();
 
-    // 6. Arch Photo Window & Vector Goan Scenery
+    // 6. Holographic Cyber HUD Arch Accents (Replaced Clumsy Trees with High-Tech Graphics)
     const p = DIMENSIONS.photo;
-    this.drawArchScenery(ctx, p.x, p.y, p.w, p.h);
+    this.drawCyberArchHUD(ctx, p.x, p.y, p.w, p.h);
 
     ctx.save();
     const photoBox = {
@@ -466,9 +463,9 @@ export class GraphicGenerator {
     drawTracked(ctx, fullSerial, DIMENSIONS.serialSlot.cx, DIMENSIONS.serialSlot.y + 22 + 1, 2.2);
     ctx.restore();
 
-    // 11. Resort Bungalows Scenery + Scannable QR Code Panel
+    // 11. Futuristic HUD Telemetry Pods + Scannable QR Code Panel (Replaced Primitive Clip-art)
     const qrP = DIMENSIONS.qrSlot;
-    this.drawResortBungalows(ctx, 48, 1145, w - 96, 240);
+    this.drawCyberTelemetryFooter(ctx, 48, 1145, w - 96, 240);
 
     ctx.save();
     roundRectPath(ctx, qrP.x, qrP.y, qrP.size, qrP.size, qrP.radius);
@@ -661,7 +658,7 @@ export class GraphicGenerator {
 
     const s = DIMENSIONS.pfp.size;
     const center = s / 2;
-    const innerR = 345; // Avatar clipping circle radius
+    const innerR = 345;
 
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -678,8 +675,8 @@ export class GraphicGenerator {
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, s, s);
 
-    // Subtle Goan Palm silhouettes at corners
-    this.drawCornerPalmLeaves(ctx, s);
+    // High-tech Cyber HUD Corner Accents
+    this.drawCornerCyberHUD(ctx, s);
 
     // 2. Avatar Photo Circle Clip
     ctx.save();
@@ -705,7 +702,6 @@ export class GraphicGenerator {
     ctx.restore();
 
     // 3. Luxurious Dual-Ring Bezel System
-    // Emerald Inner Neon Ring
     ctx.save();
     ctx.shadowColor = 'rgba(16, 185, 129, 0.85)';
     ctx.shadowBlur = 24;
@@ -716,8 +712,7 @@ export class GraphicGenerator {
     ctx.stroke();
     ctx.restore();
 
-    // Outer Broad Gold Track with Deep Emerald Fill
-    const outerTrackInnerR = innerR + 14; // 359
+    const outerTrackInnerR = innerR + 14;
     const outerTrackOuterR = 475;
 
     ctx.save();
@@ -741,7 +736,7 @@ export class GraphicGenerator {
     ctx.arc(center, center, outerTrackInnerR, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Subtle Portuguese Azulejo dot accents around outer rim
+    // Portuguese Azulejo dot accents around outer rim
     for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 16) {
       const dotX = center + (outerTrackOuterR - 8) * Math.cos(angle);
       const dotY = center + (outerTrackOuterR - 8) * Math.sin(angle);
@@ -768,7 +763,7 @@ export class GraphicGenerator {
     drawArcTextProportional(ctx, "28 – 31 OCT 2026  ◆  247 BUILDERS", center, center, 420, Math.PI / 2, false, 3.5);
     ctx.restore();
 
-    // 6. Top Studio Badge Header (Above the ring)
+    // 6. Top Studio Badge Header
     ctx.save();
     roundRectPath(ctx, center - 130, 18, 260, 36, 18);
     ctx.fillStyle = 'rgba(1, 53, 31, 0.95)';
@@ -784,7 +779,7 @@ export class GraphicGenerator {
     drawTracked(ctx, '2:47PM STUDIO // GOA', center, 36, 1.8, 'center');
     ctx.restore();
 
-    // 7. Floating Gold Metallic Ribbon Banner (Lower Third, cleanly anchored)
+    // 7. Floating Gold Metallic Ribbon Banner
     this.drawRibbonBanner(ctx, center, 860, '#FrameInGoa', 320, 54);
 
     // 8. Lower Subtitle Flex Note
@@ -875,7 +870,7 @@ export class GraphicGenerator {
   }
 
   // =========================================================================
-  // VECTOR GRAPHIC HELPERS (TITLE, ARCH SCENERY, PALMS, AZULEJO MOSAIC)
+  // HIGH-TECH CYBER HUD & VECTOR GRAPHICS (REPLACES CLUMSY CLIPART)
   // =========================================================================
 
   drawTitleBlock(ctx, cx, cy) {
@@ -919,160 +914,248 @@ export class GraphicGenerator {
     ctx.restore();
   }
 
-  drawArchScenery(ctx, px, py, pw, ph) {
+  // Ultra-Cool Cyber Circuit HUD around Arch
+  drawCyberArchHUD(ctx, px, py, pw, ph) {
     ctx.save();
-    // Left Palm Tree
-    this.drawPalm(ctx, px - 25, py + 120, 1.1, -0.15);
 
-    // Right Palm Tree
-    this.drawPalm(ctx, px + pw + 25, py + 120, 1.1, 0.15);
+    // 1. Left Side Holographic Cyber PCB Traces
+    ctx.strokeStyle = 'rgba(0, 242, 254, 0.75)';
+    ctx.lineWidth = 2;
 
-    // Left Beach Umbrella
-    this.drawUmbrella(ctx, px + 10, py + ph - 20);
+    // Left circuit wing 1
+    ctx.beginPath();
+    ctx.moveTo(px - 10, py + 80);
+    ctx.lineTo(px - 60, py + 80);
+    ctx.lineTo(px - 110, py + 140);
+    ctx.lineTo(px - 110, py + 260);
+    ctx.lineTo(px - 70, py + 300);
+    ctx.stroke();
 
-    // Right Pink Vespa
-    this.drawVespa(ctx, px + pw - 10, py + ph - 20);
+    // Left circuit wing 2
+    ctx.strokeStyle = 'rgba(253, 211, 2, 0.65)';
+    ctx.beginPath();
+    ctx.moveTo(px - 10, py + 180);
+    ctx.lineTo(px - 80, py + 180);
+    ctx.lineTo(px - 130, py + 230);
+    ctx.lineTo(px - 130, py + 380);
+    ctx.stroke();
+
+    // Glowing nodes on left circuits
+    this.drawGlowNode(ctx, px - 110, py + 260, '#00f2fe');
+    this.drawGlowNode(ctx, px - 130, py + 380, '#fdd302');
+    this.drawGlowNode(ctx, px - 70, py + 300, '#10b981');
+
+    // Left Vertical Cyber Metadata
+    ctx.save();
+    ctx.translate(px - 145, py + 220);
+    ctx.rotate(-Math.PI / 2);
+    ctx.font = '800 13px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(0, 242, 254, 0.85)';
+    ctx.textAlign = 'center';
+    drawTracked(ctx, 'LAT: 15.4989° N // GOA_NODE_01', 0, 0, 1.8, 'center');
+    ctx.restore();
+
+    // 2. Right Side Holographic Cyber PCB Traces
+    ctx.strokeStyle = 'rgba(0, 242, 254, 0.75)';
+    ctx.lineWidth = 2;
+
+    // Right circuit wing 1
+    ctx.beginPath();
+    ctx.moveTo(px + pw + 10, py + 80);
+    ctx.lineTo(px + pw + 60, py + 80);
+    ctx.lineTo(px + pw + 110, py + 140);
+    ctx.lineTo(px + pw + 110, py + 260);
+    ctx.lineTo(px + pw + 70, py + 300);
+    ctx.stroke();
+
+    // Right circuit wing 2
+    ctx.strokeStyle = 'rgba(253, 211, 2, 0.65)';
+    ctx.beginPath();
+    ctx.moveTo(px + pw + 10, py + 180);
+    ctx.lineTo(px + pw + 80, py + 180);
+    ctx.lineTo(px + pw + 130, py + 230);
+    ctx.lineTo(px + pw + 130, py + 380);
+    ctx.stroke();
+
+    // Glowing nodes on right circuits
+    this.drawGlowNode(ctx, px + pw + 110, py + 260, '#00f2fe');
+    this.drawGlowNode(ctx, px + pw + 130, py + 380, '#fdd302');
+    this.drawGlowNode(ctx, px + pw + 70, py + 300, '#10b981');
+
+    // Right Vertical Cyber Metadata
+    ctx.save();
+    ctx.translate(px + pw + 145, py + 220);
+    ctx.rotate(Math.PI / 2);
+    ctx.font = '800 13px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(253, 211, 2, 0.85)';
+    ctx.textAlign = 'center';
+    drawTracked(ctx, 'LNG: 73.8278° E // VIP_ACCESS', 0, 0, 1.8, 'center');
+    ctx.restore();
+
+    // 3. Futuristic HUD Bracket Ticks around Arch
+    ctx.strokeStyle = PALETTE.yellow;
+    ctx.lineWidth = 3;
+
+    // Top Arch Crown HUD
+    ctx.beginPath();
+    ctx.arc(px + pw / 2, py + 120, 290, -Math.PI * 0.75, -Math.PI * 0.25);
+    ctx.stroke();
+
+    // Micro crosshairs
+    this.drawCrosshair(ctx, px + 20, py + 20);
+    this.drawCrosshair(ctx, px + pw - 20, py + 20);
+    this.drawCrosshair(ctx, px - 25, py + ph - 20);
+    this.drawCrosshair(ctx, px + pw + 25, py + ph - 20);
+
     ctx.restore();
   }
 
-  drawPalm(ctx, x, y, scale = 1, curve = 0) {
+  // Futuristic HUD Telemetry Pod flanking QR Code (Replaced tiny bungalows)
+  drawCyberTelemetryFooter(ctx, x, y, width, height) {
     ctx.save();
-    ctx.translate(x, y);
-    ctx.scale(scale, scale);
 
-    // Trunk
-    ctx.lineWidth = 12;
-    ctx.strokeStyle = '#4a2e18';
-    ctx.beginPath();
-    ctx.moveTo(0, 220);
-    ctx.quadraticCurveTo(curve * 100, 90, 0, 0);
+    // Left HUD Telemetry Pod
+    const leftPodW = 270;
+    const podH = 180;
+    const podY = y + 25;
+
+    roundRectPath(ctx, x + 20, podY, leftPodW, podH, 16);
+    ctx.fillStyle = 'rgba(1, 38, 22, 0.85)';
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(0, 242, 254, 0.4)';
     ctx.stroke();
 
-    // Fronds
-    const fronds = [
-      { angle: -120, len: 130 },
-      { angle: -80, len: 150 },
-      { angle: -40, len: 140 },
-      { angle: 0, len: 130 },
-      { angle: 40, len: 140 },
-      { angle: 80, len: 150 },
-      { angle: 120, len: 130 }
-    ];
+    // Left Pod Header
+    ctx.font = '800 12px "JetBrains Mono", monospace';
+    ctx.fillStyle = PALETTE.cyan;
+    drawTracked(ctx, '❖ AUTH MATRIX', x + 40, podY + 30, 1.2, 'left');
 
-    fronds.forEach(f => {
-      ctx.save();
-      ctx.rotate((f.angle * Math.PI) / 180);
-      ctx.fillStyle = '#10b981';
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.quadraticCurveTo(-20, f.len * 0.5, 0, f.len);
-      ctx.quadraticCurveTo(20, f.len * 0.5, 0, 0);
+    ctx.font = '600 14px "Space Grotesk", sans-serif';
+    ctx.fillStyle = '#ffffff';
+    drawTracked(ctx, 'STATUS: CRACKED', x + 40, podY + 62, 0.5, 'left');
+    drawTracked(ctx, 'BOUNTY: ₹46.5L+', x + 40, podY + 92, 0.5, 'left');
+    drawTracked(ctx, 'NODE: HH_NORTH_GOA', x + 40, podY + 122, 0.5, 'left');
+
+    // Left Equalizer Pulse Bars
+    for (let i = 0; i < 8; i++) {
+      const barH = 10 + (i % 3) * 12 + ((i * 7) % 15);
+      ctx.fillStyle = i % 2 === 0 ? PALETTE.cyan : PALETTE.yellow;
+      roundRectPath(ctx, x + 40 + i * 16, podY + 155 - barH, 8, barH, 3);
       ctx.fill();
-      ctx.restore();
-    });
-    ctx.restore();
-  }
+    }
 
-  drawUmbrella(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.lineWidth = 3.5;
-    ctx.strokeStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(0, -75);
+    // Right HUD Telemetry Pod
+    const rightPodX = x + width - leftPodW - 20;
+    roundRectPath(ctx, rightPodX, podY, leftPodW, podH, 16);
+    ctx.fillStyle = 'rgba(1, 38, 22, 0.85)';
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(253, 211, 2, 0.4)';
     ctx.stroke();
 
-    ctx.fillStyle = PALETTE.pink;
-    ctx.beginPath();
-    ctx.arc(0, -75, 44, Math.PI, 0);
-    ctx.fill();
-
+    // Right Pod Header
+    ctx.font = '800 12px "JetBrains Mono", monospace';
     ctx.fillStyle = PALETTE.yellow;
-    ctx.beginPath();
-    ctx.moveTo(0, -75);
-    ctx.arc(0, -75, 44, Math.PI + 0.6, Math.PI + 1.2);
-    ctx.fill();
+    drawTracked(ctx, '❖ RESIDENCY PROTOCOL', rightPodX + 20, podY + 30, 1.2, 'left');
 
-    ctx.lineWidth = 2.5;
-    ctx.strokeStyle = PALETTE.yellow;
-    ctx.beginPath();
-    ctx.arc(0, -75, 44, Math.PI, 0);
-    ctx.stroke();
-    ctx.restore();
-  }
+    ctx.font = '600 14px "Space Grotesk", sans-serif';
+    ctx.fillStyle = '#ffffff';
+    drawTracked(ctx, 'BUILDERS: 247 SQUAD', rightPodX + 20, podY + 62, 0.5, 'left');
+    drawTracked(ctx, 'FREQ: 2.47 GHz ULTRA', rightPodX + 20, podY + 92, 0.5, 'left');
+    drawTracked(ctx, 'ENCRYPT: 256-BIT VIP', rightPodX + 20, podY + 122, 0.5, 'left');
 
-  drawVespa(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
+    // Right Equalizer Pulse Bars
+    for (let i = 0; i < 8; i++) {
+      const barH = 8 + ((i * 5) % 18) + (i % 2) * 10;
+      ctx.fillStyle = i % 2 === 0 ? PALETTE.yellow : PALETTE.pink;
+      roundRectPath(ctx, rightPodX + 20 + i * 16, podY + 155 - barH, 8, barH, 3);
+      ctx.fill();
+    }
 
-    // Wheels
-    ctx.fillStyle = '#010d06';
-    ctx.beginPath();
-    ctx.arc(-24, 0, 14, 0, Math.PI * 2);
-    ctx.arc(24, 0, 14, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Body
-    ctx.fillStyle = PALETTE.pink;
-    roundRectPath(ctx, -26, -26, 52, 18, 8);
-    ctx.fill();
-
-    ctx.fillStyle = PALETTE.yellow;
-    roundRectPath(ctx, -16, -30, 24, 6, 3);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  drawResortBungalows(ctx, x, y, width, height) {
-    ctx.save();
-    // Left Villa
-    this.drawVilla(ctx, x + 20, y + 40);
-    // Right Villa
-    this.drawVilla(ctx, x + width - 110, y + 40);
-
-    // Pool Strip
-    ctx.fillStyle = 'rgba(0, 242, 254, 0.22)';
-    roundRectPath(ctx, x + 40, y + 140, width - 80, 42, 16);
-    ctx.fill();
+    // Glowing cyan connecting rail underneath QR
+    ctx.strokeStyle = 'rgba(0, 242, 254, 0.6)';
     ctx.lineWidth = 2;
-    ctx.strokeStyle = '#00f2fe';
+    ctx.beginPath();
+    ctx.moveTo(x + 20 + leftPodW, podY + podH / 2);
+    ctx.lineTo(x + 360, podY + podH / 2);
+    ctx.moveTo(x + width - 360, podY + podH / 2);
+    ctx.lineTo(rightPodX, podY + podH / 2);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  drawGlowNode(ctx, x, y, color) {
+    ctx.save();
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  drawCrosshair(ctx, x, y) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(253, 211, 2, 0.7)';
+    ctx.lineWidth = 1.5;
+    const len = 8;
+    ctx.beginPath();
+    ctx.moveTo(x - len, y);
+    ctx.lineTo(x + len, y);
+    ctx.moveTo(x, y - len);
+    ctx.lineTo(x, y + len);
     ctx.stroke();
     ctx.restore();
   }
 
-  drawVilla(ctx, x, y) {
+  // High-Tech Cyber Corner HUD for PFP
+  drawCornerCyberHUD(ctx, size) {
     ctx.save();
-    ctx.translate(x, y);
-
-    // Roof
-    ctx.fillStyle = PALETTE.pink;
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(45, -28);
-    ctx.lineTo(90, 0);
-    ctx.closePath();
-    ctx.fill();
+    ctx.strokeStyle = 'rgba(0, 242, 254, 0.4)';
     ctx.lineWidth = 2;
-    ctx.strokeStyle = PALETTE.yellow;
+
+    const len = 45;
+    // Top-Left HUD
+    ctx.beginPath();
+    ctx.moveTo(30, 30 + len);
+    ctx.lineTo(30, 30);
+    ctx.lineTo(30 + len, 30);
     ctx.stroke();
+    this.drawCrosshair(ctx, 30, 30);
 
-    // Walls
-    ctx.fillStyle = PALETTE.cream;
-    ctx.fillRect(8, 0, 74, 48);
+    // Top-Right HUD
+    ctx.beginPath();
+    ctx.moveTo(size - 30 - len, 30);
+    ctx.lineTo(size - 30, 30);
+    ctx.lineTo(size - 30, 30 + len);
+    ctx.stroke();
+    this.drawCrosshair(ctx, size - 30, 30);
 
-    // Door & Window
-    ctx.fillStyle = PALETTE.greenInk;
-    ctx.fillRect(16, 12, 18, 18);
-    ctx.fillRect(52, 12, 18, 18);
-    ctx.fillRect(36, 24, 16, 24);
+    // Bottom-Left HUD
+    ctx.beginPath();
+    ctx.moveTo(30, size - 30 - len);
+    ctx.lineTo(30, size - 30);
+    ctx.lineTo(30 + len, size - 30);
+    ctx.stroke();
+    this.drawCrosshair(ctx, 30, size - 30);
+
+    // Bottom-Right HUD
+    ctx.beginPath();
+    ctx.moveTo(size - 30 - len, size - 30);
+    ctx.lineTo(size - 30, size - 30);
+    ctx.lineTo(size - 30, size - 30 - len);
+    ctx.stroke();
+    this.drawCrosshair(ctx, size - 30, size - 30);
+
     ctx.restore();
   }
 
   drawRibbonBanner(ctx, cx, cy, text, w = 280, h = 48) {
     ctx.save();
 
-    // Pointed Ribbon Tails
     const tailW = 16;
     ctx.fillStyle = '#b8930a';
     ctx.beginPath();
@@ -1089,7 +1172,6 @@ export class GraphicGenerator {
     ctx.closePath();
     ctx.fill();
 
-    // Warm gold metallic gradient body with soft glow
     ctx.shadowColor = 'rgba(253, 211, 2, 0.55)';
     ctx.shadowBlur = 18;
     const grad = ctx.createLinearGradient(cx, cy - h / 2, cx, cy + h / 2);
@@ -1104,7 +1186,6 @@ export class GraphicGenerator {
     ctx.strokeStyle = 'rgba(1, 53, 31, 0.4)';
     ctx.stroke();
 
-    // Sheen line
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -1148,7 +1229,6 @@ export class GraphicGenerator {
     const count = Math.round(width / tileSize);
     const step = width / count;
 
-    // Thin gold grout rails framing the band
     ctx.strokeStyle = 'rgba(253, 211, 2, 0.5)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -1169,7 +1249,6 @@ export class GraphicGenerator {
       const cy = y + height / 2;
       const motifColor = alt ? PALETTE.greenInk : PALETTE.yellow;
 
-      // Quatrefoil-style azulejo motif
       ctx.save();
       ctx.translate(cx, cy);
       ctx.fillStyle = motifColor;
@@ -1187,7 +1266,6 @@ export class GraphicGenerator {
       ctx.stroke();
       ctx.restore();
 
-      // Grout line between tiles
       ctx.strokeStyle = 'rgba(253, 211, 2, 0.35)';
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -1195,24 +1273,6 @@ export class GraphicGenerator {
       ctx.lineTo(tx, y + height);
       ctx.stroke();
     }
-    ctx.restore();
-  }
-
-  drawCornerPalmLeaves(ctx, size) {
-    ctx.save();
-    ctx.fillStyle = 'rgba(16, 185, 129, 0.12)';
-    ctx.beginPath();
-    ctx.arc(0, 0, 220, 0, Math.PI / 2);
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.arc(size, 0, 220, Math.PI / 2, Math.PI);
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.arc(0, size, 220, 1.5 * Math.PI, 2 * Math.PI);
-    ctx.arc(size, size, 220, Math.PI, 1.5 * Math.PI);
-    ctx.fill();
     ctx.restore();
   }
 
