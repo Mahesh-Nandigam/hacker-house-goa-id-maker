@@ -24,14 +24,12 @@ const generator = new GraphicGenerator();
 const pageHome = document.getElementById('pageHome');
 const pageMaker = document.getElementById('pageMaker');
 const pageSchedule = document.getElementById('pageSchedule');
-const pageShowcase = document.getElementById('pageShowcase');
 
 // Navigation Tabs
 const navLogoBtn = document.getElementById('navLogoBtn');
 const navTabHome = document.getElementById('navTabHome');
 const navTabMaker = document.getElementById('navTabMaker');
 const navTabSchedule = document.getElementById('navTabSchedule');
-const navTabShowcase = document.getElementById('navTabShowcase');
 const btnHeroCreate = document.getElementById('btnHeroCreate');
 
 // Studio DOM Elements
@@ -104,12 +102,12 @@ function navigateTo(pageId) {
   state.activePage = pageId;
   sound.click();
 
-  [pageHome, pageMaker, pageSchedule, pageShowcase].forEach(page => {
+  [pageHome, pageMaker, pageSchedule].forEach(page => {
     page.classList.add('hidden');
     page.classList.remove('flex');
   });
 
-  [navTabHome, navTabMaker, navTabSchedule, navTabShowcase].forEach(tab => tab.classList.remove('active'));
+  [navTabHome, navTabMaker, navTabSchedule].forEach(tab => tab.classList.remove('active'));
 
   if (pageId === 'home') {
     pageHome.classList.remove('hidden');
@@ -122,9 +120,6 @@ function navigateTo(pageId) {
   } else if (pageId === 'schedule') {
     pageSchedule.classList.remove('hidden');
     navTabSchedule.classList.add('active');
-  } else if (pageId === 'showcase') {
-    pageShowcase.classList.remove('hidden');
-    navTabShowcase.classList.add('active');
   }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -134,10 +129,9 @@ navLogoBtn.addEventListener('click', () => navigateTo('home'));
 navTabHome.addEventListener('click', () => navigateTo('home'));
 navTabMaker.addEventListener('click', () => navigateTo('maker'));
 navTabSchedule.addEventListener('click', () => navigateTo('schedule'));
-navTabShowcase.addEventListener('click', () => navigateTo('showcase'));
 btnHeroCreate.addEventListener('click', () => navigateTo('maker'));
 
-// Global Persona Loader
+// Global Persona Loader (exposed on window for quick-fill onclick handlers)
 window.loadPersona = (name, role, team) => {
   state.name = name;
   state.role = role;
@@ -204,12 +198,15 @@ async function render() {
 // 3D ORBIT & DRAG-TO-SPIN ENGINE
 // ----------------------------------------------------
 let rotationY = 0;
+let tiltX = 0;
 let autoSpinActive = false;
 let spinVelocity = 0;
 let lastPointerX = 0;
+let lastPointerY = 0;
 let isCardDragging = false;
 
 function updateFlipStateDisplay() {
+  if (state.mode === 'pfp') return;
   const normalized = ((rotationY % 360) + 360) % 360;
   if (normalized > 90 && normalized < 270) {
     flipInstructionText.innerText = 'Showing the back — click the card to flip it over.';
@@ -219,7 +216,7 @@ function updateFlipStateDisplay() {
 }
 
 function apply3DRotation() {
-  card3dObject.style.transform = `rotateY(${rotationY}deg)`;
+  card3dObject.style.transform = `rotateX(${tiltX}deg) rotateY(${rotationY}deg)`;
   updateFlipStateDisplay();
 }
 
@@ -230,6 +227,11 @@ function animate3D() {
   } else if (!isCardDragging && Math.abs(spinVelocity) > 0.05) {
     rotationY += spinVelocity;
     spinVelocity *= 0.93;
+    // Ease the tilt back to level once the drag/inertia settles
+    tiltX *= 0.9;
+    apply3DRotation();
+  } else if (!isCardDragging && Math.abs(tiltX) > 0.05) {
+    tiltX *= 0.88;
     apply3DRotation();
   }
   requestAnimationFrame(animate3D);
@@ -244,15 +246,21 @@ card3dScene.addEventListener('mousedown', (e) => {
   btnAutoSpin.classList.remove('bg-[#fdd302]', 'text-[#04120a]');
   btnAutoSpin.classList.add('text-[#fefce8]/50');
   lastPointerX = e.clientX;
+  lastPointerY = e.clientY;
   card3dObject.style.transition = 'none';
 });
 
 window.addEventListener('mousemove', (e) => {
   if (!isCardDragging) return;
   const deltaX = e.clientX - lastPointerX;
+  const deltaY = e.clientY - lastPointerY;
   spinVelocity = deltaX * 0.45;
   rotationY += spinVelocity;
+  // Subtle realistic tilt on the vertical axis, clamped so the disc/card
+  // never flips upside-down — just gives it that floating-disc feel.
+  tiltX = Math.max(-18, Math.min(18, tiltX - deltaY * 0.35));
   lastPointerX = e.clientX;
+  lastPointerY = e.clientY;
   apply3DRotation();
 });
 
@@ -268,15 +276,19 @@ card3dScene.addEventListener('touchstart', (e) => {
   isCardDragging = true;
   autoSpinActive = false;
   lastPointerX = e.touches[0].clientX;
+  lastPointerY = e.touches[0].clientY;
   card3dObject.style.transition = 'none';
 }, { passive: true });
 
 window.addEventListener('touchmove', (e) => {
   if (!isCardDragging || e.touches.length !== 1) return;
   const deltaX = e.touches[0].clientX - lastPointerX;
+  const deltaY = e.touches[0].clientY - lastPointerY;
   spinVelocity = deltaX * 0.45;
   rotationY += spinVelocity;
+  tiltX = Math.max(-18, Math.min(18, tiltX - deltaY * 0.35));
   lastPointerX = e.touches[0].clientX;
+  lastPointerY = e.touches[0].clientY;
   apply3DRotation();
 }, { passive: true });
 
@@ -316,6 +328,9 @@ btnAutoSpin.addEventListener('click', () => {
   }
 });
 
+// Card Face refs (front is shared by Card + PFP canvas; back only used in Card mode)
+const cardBackFace = document.getElementById('cardBackFace');
+
 // Mode Switch (Card vs PFP)
 function setMode(mode) {
   state.mode = mode;
@@ -334,17 +349,23 @@ function setMode(mode) {
     btnDownloadBack.innerText = 'Back';
     btnDownloadBoth.innerText = 'Both sides';
     flipInstructionText.innerText = 'Showing the front — click the card to flip it over.';
+    cardBackFace.classList.remove('hidden');
+    card3dObject.classList.remove('is-disc');
   } else {
     tabModePfp.classList.add('active');
     tabModeCard.classList.remove('active');
     pfpSettings.classList.remove('hidden');
     idCardSettings.classList.add('hidden');
     btnFlipCard.classList.add('hidden');
-    btnAutoSpin.classList.add('hidden');
+    btnAutoSpin.classList.remove('hidden');
     btnDownloadBack.classList.add('hidden');
     btnDownloadBoth.classList.add('hidden');
     btnDownloadFront.innerText = 'Download PFP';
-    flipInstructionText.innerText = 'Official PFP Frame Overlay • Ready for X & LinkedIn';
+    flipInstructionText.innerText = 'Drag to spin the disc • Front-only 3D frame, ready for X & LinkedIn';
+    // PFP is a front-only floating disc — hide the (stale) card-back face
+    // entirely so a drag never reveals leftover card-back artwork.
+    cardBackFace.classList.add('hidden');
+    card3dObject.classList.add('is-disc');
     rotationY = 0;
     apply3DRotation();
   }
@@ -607,3 +628,31 @@ async function init() {
 }
 
 init();
+
+// ----------------------------------------------------
+// FLOW TIMELINE: day-jump tabs <-> horizontal scroll-snap track
+// ----------------------------------------------------
+const timelineTrack = document.getElementById('timelineTrack');
+const timelineTabs = document.querySelectorAll('.timeline-tab');
+const timelineDays = document.querySelectorAll('.timeline-day');
+
+if (timelineTrack && timelineTabs.length && timelineDays.length) {
+  timelineTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const dayEl = document.querySelector(`.timeline-day[data-day="${tab.dataset.day}"]`);
+      if (!dayEl) return;
+      sound.click();
+      dayEl.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    });
+  });
+
+  const timelineObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const day = entry.target.dataset.day;
+      timelineTabs.forEach(tab => tab.classList.toggle('active', tab.dataset.day === day));
+    });
+  }, { root: timelineTrack, threshold: 0.6 });
+
+  timelineDays.forEach(day => timelineObserver.observe(day));
+}

@@ -56,9 +56,6 @@
       <button id="navTabSchedule" class="nav-link px-3.5 py-1.5 rounded-full text-xs font-bold font-['Space_Grotesk'] tracking-wider uppercase transition cursor-pointer">
         ⚡ GOATED FLOW
       </button>
-      <button id="navTabShowcase" class="nav-link px-3.5 py-1.5 rounded-full text-xs font-bold font-['Space_Grotesk'] tracking-wider uppercase transition cursor-pointer">
-        👑 HALL OF FAME
-      </button>
     </div>
 
     <!-- Right Header Tools -->
@@ -330,7 +327,7 @@
               </div>
 
               <!-- Back Face -->
-              <div class="card-face card-back absolute inset-0 flex items-center justify-center">
+              <div id="cardBackFace" class="card-face card-back absolute inset-0 flex items-center justify-center">
                 <canvas id="canvasBack" class="w-full h-auto rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.95)] border border-[#fdd302]/30"></canvas>
               </div>
 
@@ -387,108 +384,84 @@
       </h2>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="rounded-2xl border border-[#fefce8]/12 bg-[#061e11]/80 p-5 backdrop-blur-md">
-        <div class="flex items-center justify-between pb-2 border-b border-[#fefce8]/10 mb-3">
-          <span class="font-['Syne'] font-black text-lg text-[#fdd302]">DAY 01 · 28 OCT</span>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#ff007a]/20 text-[#ff007a] border border-[#ff007a]/40 font-bold">VIBE CHECK & ARRIVALS</span>
-        </div>
-        <ul class="space-y-2 text-xs font-['Space_Grotesk'] text-[#fefce8]/80">
-          <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">14:00</span><span>Villa Check-in, Lanyard Handouts & Welcome Swag</span></li>
-          <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">17:00</span><span>Opening Fireside: "Shipping Fast with Zero Excuses"</span></li>
-          <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">19:30</span><span>Goan Seafood Feast & Squad Matchmaking</span></li>
-        </ul>
-      </div>
-
-      <div class="rounded-2xl border border-[#fefce8]/12 bg-[#061e11]/80 p-5 backdrop-blur-md">
-        <div class="flex items-center justify-between pb-2 border-b border-[#fefce8]/10 mb-3">
-          <span class="font-['Syne'] font-black text-lg text-[#fdd302]">DAY 02 · 29 OCT</span>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#10b981]/20 text-emerald-400 border border-emerald-500/40 font-bold">LOCKED IN & SHIPPING</span>
-        </div>
-        <ul class="space-y-2 text-xs font-['Space_Grotesk'] text-[#fefce8]/80">
-          <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">10:00</span><span>Roast My Architecture (1-on-1 with OG Founders)</span></li>
-          <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">14:47</span><span>2:47PM Studio Unhinged Bounty Drop</span></li>
-          <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">18:00</span><span>Sunset Beach Jam · Coconut Fuel & High-Speed Wi-Fi</span></li>
-        </ul>
-      </div>
-
-      <div class="rounded-2xl border border-[#fefce8]/12 bg-[#061e11]/80 p-5 backdrop-blur-md">
-        <div class="flex items-center justify-between pb-2 border-b border-[#fefce8]/10 mb-3">
-          <span class="font-['Syne'] font-black text-lg text-[#fdd302]">DAY 03 · 30 OCT</span>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#00f2fe]/20 text-cyan-300 border border-cyan-400/40 font-bold">DEMO DAY & LAUNCH</span>
-        </div>
-        <ul class="space-y-2 text-xs font-['Space_Grotesk'] text-[#fefce8]/80">
-          <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">11:00</span><span>Code Freeze · Production Deployments or Bust</span></li>
-          <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">16:00</span><span>Live Demos in Front of Global Angels & Funds</span></li>
-          <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">21:00</span><span>House Party Under the Goan Stars</span></li>
-        </ul>
-      </div>
-
-      <div class="rounded-2xl border border-[#fefce8]/12 bg-[#061e11]/80 p-5 backdrop-blur-md">
-        <div class="flex items-center justify-between pb-2 border-b border-[#fefce8]/10 mb-3">
-          <span class="font-['Syne'] font-black text-lg text-[#fdd302]">DAY 04 · 31 OCT</span>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#ffd700]/20 text-[#ffd700] border border-[#ffd700]/40 font-bold">BAG SECURED 💰</span>
-        </div>
-        <ul class="space-y-2 text-xs font-['Space_Grotesk'] text-[#fefce8]/80">
-          <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">10:30</span><span>₹46.5L+ Prize Allocations & Fast-Track Accelerator Passes</span></li>
-          <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">13:00</span><span>Farewell Beach Lunch & Sunset Hugs</span></li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- PAGE 4: SHOWCASE (HALL OF FAME) -->
-  <!-- ========================================================================= -->
-  <section id="pageShowcase" class="page-view hidden relative z-10 max-w-[1200px] w-full mx-auto px-4 py-8">
-    <div class="text-center mb-8">
-      <span class="text-[10px] font-mono font-bold tracking-widest text-[#ff007a] uppercase px-3 py-1 rounded-full bg-[#ff007a]/10 border border-[#ff007a]/30">
-        CERTIFIED GOATS
-      </span>
-      <h2 class="font-['Bodoni_Moda',serif] font-black text-3xl sm:text-5xl text-[#fefce8] mt-2">
-        Resident Hall of Fame 👑
-      </h2>
+    <!-- Day Jump Tabs -->
+    <div id="timelineDayTabs" class="flex items-center justify-center gap-2 mb-6 overflow-x-auto no-scrollbar px-1">
+      <button type="button" class="timeline-tab active" data-day="0">DAY 01</button>
+      <button type="button" class="timeline-tab" data-day="1">DAY 02</button>
+      <button type="button" class="timeline-tab" data-day="2">DAY 03</button>
+      <button type="button" class="timeline-tab" data-day="3">DAY 04</button>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      <div class="rounded-3xl border border-[#fefce8]/12 bg-[#061e11]/90 p-4 text-center hover:border-[#fdd302] transition-all">
-        <div class="bg-[#021008] rounded-2xl p-4 border border-[#ffd700]/30 mb-3">
-          <div class="font-['Bodoni_Moda',serif] font-bold text-base text-[#fdd302]">HACKER HOUSE <span class="text-[#ff007a] font-['Syne']">गोवा</span></div>
-          <div class="w-20 h-24 mx-auto my-2 rounded-t-full bg-emerald-950 border border-[#fdd302] flex items-center justify-center text-3xl">⚡</div>
-          <div class="font-['Syne'] font-black text-lg text-[#042216] bg-[#fefce8] rounded-xl py-1 px-3">ADA LOVELACE</div>
-          <div class="text-[9px] font-mono text-[#ff007a] mt-1.5 font-black">❖ AI CRACKED ❖</div>
-          <div class="text-[8px] font-mono text-[#fdd302] mt-0.5">#GOA-2026-8704A · TEAM XENOX</div>
-        </div>
-        <button class="w-full py-2 rounded-xl bg-[#fdd302]/10 hover:bg-[#fdd302] hover:text-[#04120a] text-xs font-mono font-bold text-[#fdd302] transition cursor-pointer" onclick="window.loadPersona('Ada Lovelace', 'AI Cracked', 'XENOX')">
-          Steal this Vibe ⚡
-        </button>
-      </div>
+    <!-- Horizontal Scroll-Snap Flow Timeline -->
+    <div id="timelineTrack" class="timeline-track">
 
-      <div class="rounded-3xl border border-[#fefce8]/12 bg-[#061e11]/90 p-4 text-center hover:border-[#fdd302] transition-all">
-        <div class="bg-[#021008] rounded-2xl p-4 border border-[#ffd700]/30 mb-3">
-          <div class="font-['Bodoni_Moda',serif] font-bold text-base text-[#fdd302]">HACKER HOUSE <span class="text-[#ff007a] font-['Syne']">गोवा</span></div>
-          <div class="w-20 h-24 mx-auto my-2 rounded-t-full bg-emerald-950 border border-[#fdd302] flex items-center justify-center text-3xl">🌴</div>
-          <div class="font-['Syne'] font-black text-lg text-[#042216] bg-[#fefce8] rounded-xl py-1 px-3">MAHESH BABU</div>
-          <div class="text-[9px] font-mono text-[#ff007a] mt-1.5 font-black">❖ 10X FULLSTACK GOAT ❖</div>
-          <div class="text-[8px] font-mono text-[#fdd302] mt-0.5">#GOA-2026-0309A · TEAM REDBULL</div>
+      <article class="timeline-day" data-day="0">
+        <div class="timeline-rail">
+          <span class="timeline-dot" style="--dot-color:#ff007a"></span>
         </div>
-        <button class="w-full py-2 rounded-xl bg-[#fdd302]/10 hover:bg-[#fdd302] hover:text-[#04120a] text-xs font-mono font-bold text-[#fdd302] transition cursor-pointer" onclick="window.loadPersona('Mahesh Babu', '10X Fullstack Goat', 'REDBULL')">
-          Steal this Vibe ⚡
-        </button>
-      </div>
+        <div class="timeline-card">
+          <div class="flex items-center justify-between pb-2 border-b border-[#fefce8]/10 mb-3">
+            <span class="font-['Syne'] font-black text-lg text-[#fdd302]">DAY 01 · 28 OCT</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#ff007a]/20 text-[#ff007a] border border-[#ff007a]/40 font-bold">VIBE CHECK & ARRIVALS</span>
+          </div>
+          <ul class="space-y-2 text-xs font-['Space_Grotesk'] text-[#fefce8]/80">
+            <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">14:00</span><span>Villa Check-in, Lanyard Handouts & Welcome Swag</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">17:00</span><span>Opening Fireside: "Shipping Fast with Zero Excuses"</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">19:30</span><span>Goan Seafood Feast & Squad Matchmaking</span></li>
+          </ul>
+        </div>
+      </article>
 
-      <div class="rounded-3xl border border-[#fefce8]/12 bg-[#061e11]/90 p-4 text-center hover:border-[#fdd302] transition-all">
-        <div class="bg-[#021008] rounded-2xl p-4 border border-[#ffd700]/30 mb-3">
-          <div class="font-['Bodoni_Moda',serif] font-bold text-base text-[#fdd302]">HACKER HOUSE <span class="text-[#ff007a] font-['Syne']">गोवा</span></div>
-          <div class="w-20 h-24 mx-auto my-2 rounded-t-full bg-emerald-950 border border-[#fdd302] flex items-center justify-center text-3xl">🔐</div>
-          <div class="font-['Syne'] font-black text-lg text-[#042216] bg-[#fefce8] rounded-xl py-1 px-3">SATOSHI N.</div>
-          <div class="text-[9px] font-mono text-[#ff007a] mt-1.5 font-black">❖ RUST / SOLANA GOD ❖</div>
-          <div class="text-[8px] font-mono text-[#fdd302] mt-0.5">#GOA-2026-0001A · SOLO DEV</div>
+      <article class="timeline-day" data-day="1">
+        <div class="timeline-rail">
+          <span class="timeline-dot" style="--dot-color:#10b981"></span>
         </div>
-        <button class="w-full py-2 rounded-xl bg-[#fdd302]/10 hover:bg-[#fdd302] hover:text-[#04120a] text-xs font-mono font-bold text-[#fdd302] transition cursor-pointer" onclick="window.loadPersona('Satoshi N.', 'Rust / Solana God', 'SOLO DEV')">
-          Steal this Vibe ⚡
-        </button>
-      </div>
+        <div class="timeline-card">
+          <div class="flex items-center justify-between pb-2 border-b border-[#fefce8]/10 mb-3">
+            <span class="font-['Syne'] font-black text-lg text-[#fdd302]">DAY 02 · 29 OCT</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#10b981]/20 text-emerald-400 border border-emerald-500/40 font-bold">LOCKED IN & SHIPPING</span>
+          </div>
+          <ul class="space-y-2 text-xs font-['Space_Grotesk'] text-[#fefce8]/80">
+            <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">10:00</span><span>Roast My Architecture (1-on-1 with OG Founders)</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">14:47</span><span>2:47PM Studio Unhinged Bounty Drop</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">18:00</span><span>Sunset Beach Jam · Coconut Fuel & High-Speed Wi-Fi</span></li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="timeline-day" data-day="2">
+        <div class="timeline-rail">
+          <span class="timeline-dot" style="--dot-color:#00f2fe"></span>
+        </div>
+        <div class="timeline-card">
+          <div class="flex items-center justify-between pb-2 border-b border-[#fefce8]/10 mb-3">
+            <span class="font-['Syne'] font-black text-lg text-[#fdd302]">DAY 03 · 30 OCT</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#00f2fe]/20 text-cyan-300 border border-cyan-400/40 font-bold">DEMO DAY & LAUNCH</span>
+          </div>
+          <ul class="space-y-2 text-xs font-['Space_Grotesk'] text-[#fefce8]/80">
+            <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">11:00</span><span>Code Freeze · Production Deployments or Bust</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">16:00</span><span>Live Demos in Front of Global Angels & Funds</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">21:00</span><span>House Party Under the Goan Stars</span></li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="timeline-day" data-day="3">
+        <div class="timeline-rail">
+          <span class="timeline-dot" style="--dot-color:#ffd700"></span>
+        </div>
+        <div class="timeline-card">
+          <div class="flex items-center justify-between pb-2 border-b border-[#fefce8]/10 mb-3">
+            <span class="font-['Syne'] font-black text-lg text-[#fdd302]">DAY 04 · 31 OCT</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#ffd700]/20 text-[#ffd700] border border-[#ffd700]/40 font-bold">BAG SECURED 💰</span>
+          </div>
+          <ul class="space-y-2 text-xs font-['Space_Grotesk'] text-[#fefce8]/80">
+            <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">10:30</span><span>₹46.5L+ Prize Allocations & Fast-Track Accelerator Passes</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#fdd302] font-mono">13:00</span><span>Farewell Beach Lunch & Sunset Hugs</span></li>
+          </ul>
+        </div>
+      </article>
+
     </div>
   </section>
 

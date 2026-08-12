@@ -81,6 +81,13 @@ html, body {
   transform: rotateY(180deg);
 }
 
+/* PFP Disc mode adjustments */
+.card-flipper.is-disc #canvasFront {
+  border-radius: 9999px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 40px rgba(23, 160, 85, 0.35);
+  aspect-ratio: 1 / 1;
+}
+
 /* Canvas Display Scaling - Strictly bounded to prevent overflowing */
 #canvasFront, #canvasBack {
   display: block;
@@ -88,7 +95,7 @@ html, body {
   max-height: 410px;
   width: auto;
   height: auto;
-  aspect-ratio: 1200 / 1800;
+  aspect-ratio: 998 / 1436;
   object-fit: contain;
 }
 
@@ -102,11 +109,96 @@ html, body {
   color: #ffffff;
 }
 
-/* Shape buttons */
-.shape-btn.active {
-  border-color: #10b981;
-  background: rgba(2, 103, 51, 0.4);
-  color: #ffffff;
+/* Timeline Flow Component */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.timeline-tab {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid rgba(254, 252, 232, 0.12);
+  background: #061e11;
+  color: rgba(254, 252, 232, 0.6);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.timeline-tab:hover {
+  color: #fefce8;
+  border-color: #fdd302;
+}
+.timeline-tab.active {
+  background: #fdd302;
+  color: #04120a;
+  border-color: #fdd302;
+  box-shadow: 0 0 14px rgba(253, 211, 2, 0.45);
+}
+
+.timeline-track {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 0.5rem 0.25rem 1.5rem;
+  scroll-behavior: smooth;
+}
+
+.timeline-day {
+  flex: 0 0 100%;
+  max-width: 100%;
+  scroll-snap-align: start;
+  position: relative;
+}
+@media (min-width: 640px) {
+  .timeline-day {
+    flex: 0 0 calc(50% - 0.625rem);
+    max-width: calc(50% - 0.625rem);
+  }
+}
+@media (min-width: 1024px) {
+  .timeline-day {
+    flex: 0 0 calc(50% - 0.625rem);
+    max-width: calc(50% - 0.625rem);
+  }
+}
+
+.timeline-rail {
+  position: relative;
+  height: 2px;
+  background: rgba(254, 252, 232, 0.1);
+  margin-bottom: 1rem;
+}
+.timeline-dot {
+  position: absolute;
+  top: -5px;
+  left: 1.5rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  background: var(--dot-color, #fdd302);
+  box-shadow: 0 0 12px var(--dot-color, #fdd302);
+}
+
+.timeline-card {
+  border-radius: 1rem;
+  border: 1px solid rgba(254, 252, 232, 0.1);
+  background: rgba(6, 30, 17, 0.85);
+  backdrop-filter: blur(12px);
+  padding: 1.25rem;
+  transition: all 0.2s ease;
+}
+.timeline-card:hover {
+  border-color: rgba(253, 211, 2, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
 }
 
 /* Custom Scrollbar */

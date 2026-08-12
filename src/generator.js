@@ -77,7 +77,9 @@ export function measureTracked(ctx, text, tracking = 0) {
 
 export function drawTracked(ctx, text, x, y, tracking = 0, align = "center") {
   const total = measureTracked(ctx, text, tracking);
-  let curX = align === "center" ? x - total / 2 : x;
+  let curX = x;
+  if (align === "center") curX = x - total / 2;
+  else if (align === "right") curX = x - total;
   const prevAlign = ctx.textAlign;
   ctx.textAlign = "left";
   for (const c of [...text]) {
@@ -161,16 +163,40 @@ export function drawBarcode(ctx, text, x, y, w, h) {
     hash = (31 * hash + text.charCodeAt(i)) >>> 0;
   }
   const rand = seededRandom(hash);
+
   ctx.save();
+  // White scan panel so the barcode reads as a real, high-contrast laser strip
+  roundRectPath(ctx, x - 14, y - 10, w + 28, h + 20, 8);
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = 'rgba(1, 53, 31, 0.25)';
+  ctx.stroke();
+
+  // Cyan laser glow sweep behind the bars
+  ctx.save();
+  ctx.shadowColor = 'rgba(0, 242, 254, 0.55)';
+  ctx.shadowBlur = 6;
   ctx.fillStyle = PALETTE.greenInk;
   let curX = x;
   while (curX < x + w) {
     const barW = 1 + Math.floor(rand() * 3);
     const gapW = 1 + Math.floor(rand() * 3);
+    const tall = rand() > 0.82;
+    const barH = tall ? h + 8 : h;
     const drawW = Math.min(barW, x + w - curX);
-    if (drawW > 0) ctx.fillRect(curX, y, drawW, h);
+    if (drawW > 0) ctx.fillRect(curX, y - (tall ? 4 : 0), drawW, barH);
     curX += barW + gapW;
   }
+  ctx.restore();
+
+  // Thin cyan scan-line accent across the strip
+  ctx.strokeStyle = 'rgba(0, 242, 254, 0.9)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x, y + h / 2);
+  ctx.lineTo(x + w, y + h / 2);
+  ctx.stroke();
   ctx.restore();
 }
 
@@ -178,6 +204,17 @@ export class GraphicGenerator {
   constructor() {
     this.userImage = null;
     this.qrImage = null;
+  }
+
+  // No-op: all card/PFP artwork is drawn procedurally with canvas vector
+  // graphics (drawTitleBlock, drawArchScenery, drawResortBungalows, etc.)
+  // rather than composited from the bitmap files in /public/templates, so
+  // there is nothing to preload here. Kept as an async method because
+  // main.js awaits it during init() — without it, that await threw
+  // "generator.loadTemplates is not a function" and silently aborted the
+  // rest of init() (QR generation, default avatar, first render).
+  async loadTemplates() {
+    return Promise.resolve();
   }
 
   async setUserImage(imgSource) {
@@ -266,15 +303,14 @@ export class GraphicGenerator {
     roundRectPath(ctx, 22, 22, w - 44, h - 44, 14);
     ctx.stroke();
 
-    // 3. Header Details
+    // 3. Header Details (tracked for a crisp, premium feel per spec)
     ctx.save();
     ctx.font = '800 20px "JetBrains Mono", monospace';
     ctx.fillStyle = PALETTE.yellow;
-    ctx.fillText('2:47PM STUDIO', 60, 115);
+    drawTracked(ctx, '2:47PM STUDIO', 60, 115, 1.4, 'left');
 
-    ctx.textAlign = 'right';
     ctx.font = '700 18px "Space Grotesk", sans-serif';
-    ctx.fillText('28 – 31 OCT 2026 // GOA, INDIA', w - 60, 115);
+    drawTracked(ctx, '28 – 31 OCT 2026 // GOA, INDIA', w - 60, 115, 0.6, 'right');
     ctx.restore();
 
     // 4. Main Event Wordmark: HACKER [गोवा] HOUSE
@@ -498,14 +534,14 @@ export class GraphicGenerator {
     ctx.save();
     ctx.font = '900 28px "Syne", sans-serif';
     ctx.fillStyle = PALETTE.yellow;
-    ctx.fillText('❖  SCAN TO VERIFY  ❖', infoX, qrBoxY + 45);
+    drawTracked(ctx, '❖  SCAN TO VERIFY  ❖', infoX, qrBoxY + 45, 0.8, 'left');
 
     ctx.font = '600 17px "Space Grotesk", sans-serif';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText('SCAN FOR LIVE SCHEDULE,', infoX, qrBoxY + 85);
-    ctx.fillText('₹46.5L+ BOUNTY TRACKS,', infoX, qrBoxY + 115);
-    ctx.fillText('VILLA ACCESS PASS &', infoX, qrBoxY + 145);
-    ctx.fillText('RESIDENCY PORTAL.', infoX, qrBoxY + 175);
+    drawTracked(ctx, 'SCAN FOR LIVE SCHEDULE,', infoX, qrBoxY + 85, 0.4, 'left');
+    drawTracked(ctx, '₹46.5L+ BOUNTY TRACKS,', infoX, qrBoxY + 115, 0.4, 'left');
+    drawTracked(ctx, 'VILLA ACCESS PASS &', infoX, qrBoxY + 145, 0.4, 'left');
+    drawTracked(ctx, 'RESIDENCY PORTAL.', infoX, qrBoxY + 175, 0.4, 'left');
     ctx.restore();
 
     // 4. Azulejo Tile Divider
@@ -708,13 +744,15 @@ export class GraphicGenerator {
     const cardW = frontCanvas.width;
     const cardH = frontCanvas.height;
     const cardY = (h - cardH) / 2 + 30;
+    const frontX = 360;
+    const backX = 1300;
 
     ctx.save();
     ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
     ctx.shadowBlur = 60;
     ctx.shadowOffsetX = -20;
     ctx.shadowOffsetY = 30;
-    ctx.drawImage(frontCanvas, 360, cardY, cardW, cardH);
+    ctx.drawImage(frontCanvas, frontX, cardY, cardW, cardH);
     ctx.restore();
 
     ctx.save();
@@ -722,7 +760,25 @@ export class GraphicGenerator {
     ctx.shadowBlur = 60;
     ctx.shadowOffsetX = 20;
     ctx.shadowOffsetY = 30;
-    ctx.drawImage(backCanvas, 1300, cardY, cardW, cardH);
+    ctx.drawImage(backCanvas, backX, cardY, cardW, cardH);
+    ctx.restore();
+
+    // FRONT / BACK tags so the pair reads clearly at feed thumbnail size
+    ctx.save();
+    ctx.font = '800 16px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(254, 247, 230, 0.65)';
+    drawTracked(ctx, 'FRONT', frontX + cardW / 2, cardY + cardH + 34, 3, 'center');
+    drawTracked(ctx, 'BACK', backX + cardW / 2, cardY + cardH + 34, 3, 'center');
+    ctx.restore();
+
+    // Soft vignette so the frame edges settle into the backdrop
+    ctx.save();
+    const vignette = ctx.createRadialGradient(w / 2, h / 2, h * 0.35, w / 2, h / 2, h * 0.75);
+    vignette.addColorStop(0, 'rgba(0,0,0,0)');
+    vignette.addColorStop(1, 'rgba(0,0,0,0.45)');
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0, 0, w, h);
     ctx.restore();
 
     return canvas;
@@ -925,18 +981,51 @@ export class GraphicGenerator {
 
   drawRibbonBanner(ctx, cx, cy, text, w = 280, h = 48) {
     ctx.save();
-    roundRectPath(ctx, cx - w / 2, cy - h / 2, w, h, h / 2);
-    ctx.fillStyle = PALETTE.greenInk;
+
+    // Ribbon tails poking out either side, so it reads as a banner, not a pill
+    const tailW = 16;
+    ctx.fillStyle = '#b8930a';
+    ctx.beginPath();
+    ctx.moveTo(cx - w / 2, cy - h / 2 + 4);
+    ctx.lineTo(cx - w / 2 - tailW, cy);
+    ctx.lineTo(cx - w / 2, cy + h / 2 - 4);
+    ctx.closePath();
     ctx.fill();
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = PALETTE.yellow;
+    ctx.beginPath();
+    ctx.moveTo(cx + w / 2, cy - h / 2 + 4);
+    ctx.lineTo(cx + w / 2 + tailW, cy);
+    ctx.lineTo(cx + w / 2, cy + h / 2 - 4);
+    ctx.closePath();
+    ctx.fill();
+
+    // Warm gold metallic gradient body with a soft glow, per spec
+    ctx.shadowColor = 'rgba(253, 211, 2, 0.55)';
+    ctx.shadowBlur = 18;
+    const grad = ctx.createLinearGradient(cx, cy - h / 2, cx, cy + h / 2);
+    grad.addColorStop(0, '#fff4b0');
+    grad.addColorStop(0.45, PALETTE.yellow);
+    grad.addColorStop(1, '#b8930a');
+    roundRectPath(ctx, cx - w / 2, cy - h / 2, w, h, h / 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(1, 53, 31, 0.4)';
+    ctx.stroke();
+
+    // A thin metallic sheen line near the top edge
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cx - w / 2 + 14, cy - h / 2 + 6);
+    ctx.lineTo(cx + w / 2 - 14, cy - h / 2 + 6);
     ctx.stroke();
 
     ctx.font = '900 22px "Syne", sans-serif';
-    ctx.fillStyle = PALETTE.yellow;
+    ctx.fillStyle = PALETTE.greenInk;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(text, cx, cy);
+    ctx.fillText(text, cx, cy + 1);
     ctx.restore();
   }
 
@@ -964,17 +1053,57 @@ export class GraphicGenerator {
 
   drawAzulejoMosaicBand(ctx, x, y, width, height) {
     ctx.save();
-    const count = 24;
+    const tileSize = height;
+    const count = Math.round(width / tileSize);
     const step = width / count;
-    ctx.fillStyle = PALETTE.yellow;
+
+    // Thin gold grout rails framing the band
+    ctx.strokeStyle = 'rgba(253, 211, 2, 0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + width, y);
+    ctx.moveTo(x, y + height);
+    ctx.lineTo(x + width, y + height);
+    ctx.stroke();
+
     for (let i = 0; i < count; i++) {
-      const mx = x + i * step + step / 2;
-      const my = y + height / 2;
+      const tx = x + i * step;
+      const alt = i % 2 === 0;
+
+      // Alternating cream / deep-emerald tile squares, like glazed azulejo faience
+      ctx.fillStyle = alt ? PALETTE.cream : PALETTE.greenInk;
+      ctx.fillRect(tx, y, step, height);
+
+      const cx = tx + step / 2;
+      const cy = y + height / 2;
+      const motifColor = alt ? PALETTE.greenInk : PALETTE.yellow;
+
+      // Quatrefoil-style azulejo motif: rotated diamond + petals
       ctx.save();
-      ctx.translate(mx, my);
+      ctx.translate(cx, cy);
+      ctx.fillStyle = motifColor;
       ctx.rotate(Math.PI / 4);
-      ctx.fillRect(-5, -5, 10, 10);
+      const r = height * 0.24;
+      ctx.fillRect(-r, -r, r * 2, r * 2);
       ctx.restore();
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.strokeStyle = motifColor;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(0, 0, height * 0.36, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      // Grout line between tiles
+      ctx.strokeStyle = 'rgba(253, 211, 2, 0.35)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(tx, y);
+      ctx.lineTo(tx, y + height);
+      ctx.stroke();
     }
     ctx.restore();
   }
