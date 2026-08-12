@@ -81,15 +81,34 @@ html, body {
   transform: rotateY(180deg);
 }
 
-/* Canvas Display Scaling - Strictly bounded to prevent overflowing */
+/* Canvas Display Scaling */
 #canvasFront, #canvasBack {
   display: block;
   max-width: 100%;
   max-height: 410px;
   width: auto;
   height: auto;
-  aspect-ratio: 1200 / 1800;
+  aspect-ratio: 998 / 1436;
   object-fit: contain;
+}
+
+/* PFP Mode: Perfectly proportioned circular disc badge */
+.card-flipper.is-disc {
+  max-width: 330px !important;
+  aspect-ratio: 1 / 1 !important;
+  animation: discFloat 4.5s ease-in-out infinite;
+}
+
+.card-flipper.is-disc #canvasFront {
+  aspect-ratio: 1 / 1 !important;
+  max-height: 330px !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95), 0 0 45px rgba(16, 185, 129, 0.4) !important;
+}
+
+@keyframes discFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
 }
 
 /* Role Pills */
@@ -134,16 +153,6 @@ input[type="range"]::-webkit-slider-thumb {
   background: #fdd302;
   cursor: pointer;
   box-shadow: 0 0 8px rgba(253, 211, 2, 0.8);
-}
-
-/* PFP Mode: front-only floating disc — gentle idle bob so it reads as
-   a hovering object rather than a static flat frame */
-.card-flipper.is-disc {
-  animation: discFloat 4.5s ease-in-out infinite;
-}
-@keyframes discFloat {
-  0%, 100% { margin-top: 0px; }
-  50% { margin-top: -10px; }
 }
 
 /* Hide scrollbar on the day-jump tab strip without hiding scroll behavior */
@@ -229,8 +238,6 @@ input[type="range"]::-webkit-slider-thumb {
   transform: translateY(-2px);
 }
 
-/* Vertical stack on very narrow screens, since a 4-up horizontal scroll
-   is cramped below ~420px — the flow becomes a simple top-to-bottom rail */
 @media (max-width: 420px) {
   .timeline-track {
     flex-direction: column;

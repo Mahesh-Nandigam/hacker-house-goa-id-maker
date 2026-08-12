@@ -109,6 +109,48 @@ export function fitTracked(ctx, text, maxWidth, options) {
   return { size, tracking };
 }
 
+// Proportional Typographic Curved Text (Zero overlapping, smooth kerning)
+export function drawArcTextProportional(ctx, text, cx, cy, radius, startAngleCenter, inward = true, letterSpacing = 2) {
+  ctx.save();
+  const chars = [...text];
+  const charWidths = chars.map(c => ctx.measureText(c).width + letterSpacing);
+  const totalWidth = charWidths.reduce((a, b) => a + b, 0);
+  const totalAngle = totalWidth / radius;
+
+  let currentAngle = inward 
+    ? (startAngleCenter - totalAngle / 2) 
+    : (startAngleCenter + totalAngle / 2);
+
+  for (let i = 0; i < chars.length; i++) {
+    const charW = charWidths[i];
+    const halfAngle = (charW / 2) / radius;
+    const charAngle = inward ? (currentAngle + halfAngle) : (currentAngle - halfAngle);
+
+    ctx.save();
+    const x = cx + radius * Math.cos(charAngle);
+    const y = cy + radius * Math.sin(charAngle);
+    ctx.translate(x, y);
+
+    if (inward) {
+      ctx.rotate(charAngle + Math.PI / 2);
+    } else {
+      ctx.rotate(charAngle - Math.PI / 2);
+    }
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(chars[i], 0, 0);
+    ctx.restore();
+
+    if (inward) {
+      currentAngle += charW / radius;
+    } else {
+      currentAngle -= charW / radius;
+    }
+  }
+  ctx.restore();
+}
+
 export function drawCoveredImage(ctx, img, box, transform) {
   const natW = img.naturalWidth || img.width;
   const natH = img.naturalHeight || img.height;
@@ -165,7 +207,7 @@ export function drawBarcode(ctx, text, x, y, w, h) {
   const rand = seededRandom(hash);
 
   ctx.save();
-  // White scan panel so the barcode reads as a real, high-contrast laser strip
+  // White scan panel
   roundRectPath(ctx, x - 14, y - 10, w + 28, h + 20, 8);
   ctx.fillStyle = '#ffffff';
   ctx.fill();
@@ -173,7 +215,7 @@ export function drawBarcode(ctx, text, x, y, w, h) {
   ctx.strokeStyle = 'rgba(1, 53, 31, 0.25)';
   ctx.stroke();
 
-  // Cyan laser glow sweep behind the bars
+  // Cyan laser glow
   ctx.save();
   ctx.shadowColor = 'rgba(0, 242, 254, 0.55)';
   ctx.shadowBlur = 6;
@@ -190,7 +232,7 @@ export function drawBarcode(ctx, text, x, y, w, h) {
   }
   ctx.restore();
 
-  // Thin cyan scan-line accent across the strip
+  // Cyan scan line
   ctx.strokeStyle = 'rgba(0, 242, 254, 0.9)';
   ctx.lineWidth = 1;
   ctx.beginPath();
@@ -206,13 +248,6 @@ export class GraphicGenerator {
     this.qrImage = null;
   }
 
-  // No-op: all card/PFP artwork is drawn procedurally with canvas vector
-  // graphics (drawTitleBlock, drawArchScenery, drawResortBungalows, etc.)
-  // rather than composited from the bitmap files in /public/templates, so
-  // there is nothing to preload here. Kept as an async method because
-  // main.js awaits it during init() — without it, that await threw
-  // "generator.loadTemplates is not a function" and silently aborted the
-  // rest of init() (QR generation, default avatar, first render).
   async loadTemplates() {
     return Promise.resolve();
   }
@@ -262,7 +297,6 @@ export class GraphicGenerator {
 
   // =========================================================================
   // FORMAT B: BUILDER ID CARD - FRONT (998 x 1436 px)
-  // HIGH-END PRODUCTION-READY EDITION
   // =========================================================================
   renderCardFront(state, scale = 1.0) {
     const canvas = document.createElement('canvas');
@@ -303,7 +337,7 @@ export class GraphicGenerator {
     roundRectPath(ctx, 22, 22, w - 44, h - 44, 14);
     ctx.stroke();
 
-    // 3. Header Details (tracked for a crisp, premium feel per spec)
+    // 3. Header Details
     ctx.save();
     ctx.font = '800 20px "JetBrains Mono", monospace';
     ctx.fillStyle = PALETTE.yellow;
@@ -616,7 +650,7 @@ export class GraphicGenerator {
   }
 
   // =========================================================================
-  // FORMAT A: PFP FRAME OVERLAY (1024 x 1024 px)
+  // FORMAT A: PFP FRAME OVERLAY (1024 x 1024 px) - GOAT EDITION
   // =========================================================================
   renderPFP(state, scale = 1.0) {
     const canvas = document.createElement('canvas');
@@ -627,8 +661,7 @@ export class GraphicGenerator {
 
     const s = DIMENSIONS.pfp.size;
     const center = s / 2;
-    const innerR = 340;
-    const ringR = 380;
+    const innerR = 345; // Avatar clipping circle radius
 
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -637,18 +670,18 @@ export class GraphicGenerator {
     ctx.imageSmoothingQuality = 'high';
     ctx.scale(scale, scale);
 
-    // 1. Deep Emerald Ambient Radial Backdrop
-    const bgGrad = ctx.createRadialGradient(center, center, 120, center, center, s / 2);
+    // 1. Ambient Emerald Backdrop
+    const bgGrad = ctx.createRadialGradient(center, center, 140, center, center, s / 2);
     bgGrad.addColorStop(0, '#0a3822');
     bgGrad.addColorStop(0.7, '#041f13');
     bgGrad.addColorStop(1, '#021008');
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, s, s);
 
-    // Corner Tropical Palm Leaf Silhouettes
+    // Subtle Goan Palm silhouettes at corners
     this.drawCornerPalmLeaves(ctx, s);
 
-    // 2. Center Photo Circle Clip
+    // 2. Avatar Photo Circle Clip
     ctx.save();
     ctx.beginPath();
     ctx.arc(center, center, innerR, 0, Math.PI * 2);
@@ -671,39 +704,96 @@ export class GraphicGenerator {
     }
     ctx.restore();
 
-    // 3. Glowing Neon Emerald Outer Ring
+    // 3. Luxurious Dual-Ring Bezel System
+    // Emerald Inner Neon Ring
     ctx.save();
-    ctx.shadowColor = 'rgba(23, 160, 85, 0.85)';
-    ctx.shadowBlur = 35;
-
-    ctx.lineWidth = 26;
-    ctx.strokeStyle = '#17a055';
+    ctx.shadowColor = 'rgba(16, 185, 129, 0.85)';
+    ctx.shadowBlur = 24;
+    ctx.lineWidth = 14;
+    ctx.strokeStyle = '#10b981';
     ctx.beginPath();
-    ctx.arc(center, center, innerR + 13, 0, Math.PI * 2);
+    ctx.arc(center, center, innerR + 7, 0, Math.PI * 2);
     ctx.stroke();
+    ctx.restore();
 
-    // Outer Gold Accent Ring
-    ctx.lineWidth = 4;
+    // Outer Broad Gold Track with Deep Emerald Fill
+    const outerTrackInnerR = innerR + 14; // 359
+    const outerTrackOuterR = 475;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(center, center, outerTrackOuterR, 0, Math.PI * 2);
+    ctx.arc(center, center, outerTrackInnerR, 0, Math.PI * 2, true);
+    ctx.fillStyle = 'rgba(1, 38, 22, 0.88)';
+    ctx.fill();
+
+    // Outer Gold Precision Rail
+    ctx.lineWidth = 5;
     ctx.strokeStyle = PALETTE.yellow;
     ctx.beginPath();
-    ctx.arc(center, center, ringR + 15, 0, Math.PI * 2);
+    ctx.arc(center, center, outerTrackOuterR, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Concentric Arc Typography
-    this.drawArcTextTop(ctx, "★ HACKER HOUSE GOA 2026 ★", center, center, ringR + 52);
-    this.drawArcTextBottom(ctx, "28 - 31 OCT 2026 • 247 BUILDERS", center, center, ringR + 52);
+    // Inner Gold Precision Rail
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = PALETTE.yellow;
+    ctx.beginPath();
+    ctx.arc(center, center, outerTrackInnerR, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Subtle Portuguese Azulejo dot accents around outer rim
+    for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 16) {
+      const dotX = center + (outerTrackOuterR - 8) * Math.cos(angle);
+      const dotY = center + (outerTrackOuterR - 8) * Math.sin(angle);
+      ctx.fillStyle = 'rgba(253, 211, 2, 0.6)';
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
     ctx.restore();
 
-    // 4. Header Top: 2:47PM STUDIO // HHGOA.COM
+    // 4. Proportional Curved Typography - TOP ARC
     ctx.save();
-    ctx.font = '800 22px "Space Grotesk", sans-serif';
+    ctx.font = '900 32px "Syne", sans-serif';
+    ctx.fillStyle = PALETTE.yellow;
+    ctx.shadowColor = 'rgba(253, 211, 2, 0.4)';
+    ctx.shadowBlur = 10;
+    drawArcTextProportional(ctx, "★  HACKER HOUSE GOA 2026  ★", center, center, 415, -Math.PI / 2, true, 4);
+    ctx.restore();
+
+    // 5. Proportional Curved Typography - BOTTOM ARC
+    ctx.save();
+    ctx.font = '700 24px "Space Grotesk", sans-serif';
+    ctx.fillStyle = '#ffffff';
+    drawArcTextProportional(ctx, "28 – 31 OCT 2026  ◆  247 BUILDERS", center, center, 420, Math.PI / 2, false, 3.5);
+    ctx.restore();
+
+    // 6. Top Studio Badge Header (Above the ring)
+    ctx.save();
+    roundRectPath(ctx, center - 130, 18, 260, 36, 18);
+    ctx.fillStyle = 'rgba(1, 53, 31, 0.95)';
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = PALETTE.yellow;
+    ctx.stroke();
+
+    ctx.font = '800 13px "JetBrains Mono", monospace';
     ctx.fillStyle = PALETTE.yellow;
     ctx.textAlign = 'center';
-    ctx.fillText('2:47PM STUDIO // HHGOA.COM', center, 65);
+    ctx.textBaseline = 'middle';
+    drawTracked(ctx, '2:47PM STUDIO // GOA', center, 36, 1.8, 'center');
     ctx.restore();
 
-    // 5. Bottom Ribbon Banner: #FrameInGoa
-    this.drawRibbonBanner(ctx, center, s * 0.88, '#FrameInGoa', 360, 60);
+    // 7. Floating Gold Metallic Ribbon Banner (Lower Third, cleanly anchored)
+    this.drawRibbonBanner(ctx, center, 860, '#FrameInGoa', 320, 54);
+
+    // 8. Lower Subtitle Flex Note
+    ctx.save();
+    ctx.font = '800 14px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(254, 247, 230, 0.75)';
+    ctx.textAlign = 'center';
+    drawTracked(ctx, 'BUILT TO SHIP  •  ZERO LOGIN', center, 960, 2, 'center');
+    ctx.restore();
 
     ctx.restore();
     return canvas;
@@ -763,7 +853,7 @@ export class GraphicGenerator {
     ctx.drawImage(backCanvas, backX, cardY, cardW, cardH);
     ctx.restore();
 
-    // FRONT / BACK tags so the pair reads clearly at feed thumbnail size
+    // FRONT / BACK tags
     ctx.save();
     ctx.font = '800 16px "JetBrains Mono", monospace';
     ctx.textAlign = 'center';
@@ -772,7 +862,7 @@ export class GraphicGenerator {
     drawTracked(ctx, 'BACK', backX + cardW / 2, cardY + cardH + 34, 3, 'center');
     ctx.restore();
 
-    // Soft vignette so the frame edges settle into the backdrop
+    // Soft vignette
     ctx.save();
     const vignette = ctx.createRadialGradient(w / 2, h / 2, h * 0.35, w / 2, h / 2, h * 0.75);
     vignette.addColorStop(0, 'rgba(0,0,0,0)');
@@ -982,7 +1072,7 @@ export class GraphicGenerator {
   drawRibbonBanner(ctx, cx, cy, text, w = 280, h = 48) {
     ctx.save();
 
-    // Ribbon tails poking out either side, so it reads as a banner, not a pill
+    // Pointed Ribbon Tails
     const tailW = 16;
     ctx.fillStyle = '#b8930a';
     ctx.beginPath();
@@ -991,6 +1081,7 @@ export class GraphicGenerator {
     ctx.lineTo(cx - w / 2, cy + h / 2 - 4);
     ctx.closePath();
     ctx.fill();
+
     ctx.beginPath();
     ctx.moveTo(cx + w / 2, cy - h / 2 + 4);
     ctx.lineTo(cx + w / 2 + tailW, cy);
@@ -998,7 +1089,7 @@ export class GraphicGenerator {
     ctx.closePath();
     ctx.fill();
 
-    // Warm gold metallic gradient body with a soft glow, per spec
+    // Warm gold metallic gradient body with soft glow
     ctx.shadowColor = 'rgba(253, 211, 2, 0.55)';
     ctx.shadowBlur = 18;
     const grad = ctx.createLinearGradient(cx, cy - h / 2, cx, cy + h / 2);
@@ -1013,7 +1104,7 @@ export class GraphicGenerator {
     ctx.strokeStyle = 'rgba(1, 53, 31, 0.4)';
     ctx.stroke();
 
-    // A thin metallic sheen line near the top edge
+    // Sheen line
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -1071,7 +1162,6 @@ export class GraphicGenerator {
       const tx = x + i * step;
       const alt = i % 2 === 0;
 
-      // Alternating cream / deep-emerald tile squares, like glazed azulejo faience
       ctx.fillStyle = alt ? PALETTE.cream : PALETTE.greenInk;
       ctx.fillRect(tx, y, step, height);
 
@@ -1079,7 +1169,7 @@ export class GraphicGenerator {
       const cy = y + height / 2;
       const motifColor = alt ? PALETTE.greenInk : PALETTE.yellow;
 
-      // Quatrefoil-style azulejo motif: rotated diamond + petals
+      // Quatrefoil-style azulejo motif
       ctx.save();
       ctx.translate(cx, cy);
       ctx.fillStyle = motifColor;
@@ -1111,17 +1201,14 @@ export class GraphicGenerator {
   drawCornerPalmLeaves(ctx, size) {
     ctx.save();
     ctx.fillStyle = 'rgba(16, 185, 129, 0.12)';
-    // Top Left Corner
     ctx.beginPath();
     ctx.arc(0, 0, 220, 0, Math.PI / 2);
     ctx.fill();
 
-    // Top Right Corner
     ctx.beginPath();
     ctx.arc(size, 0, 220, Math.PI / 2, Math.PI);
     ctx.fill();
 
-    // Bottom Corners
     ctx.beginPath();
     ctx.arc(0, size, 220, 1.5 * Math.PI, 2 * Math.PI);
     ctx.arc(size, size, 220, Math.PI, 1.5 * Math.PI);
@@ -1139,50 +1226,6 @@ export class GraphicGenerator {
     ctx.beginPath();
     ctx.arc(cx, cy + r * 0.5, r * 0.6, Math.PI, 0);
     ctx.fill();
-    ctx.restore();
-  }
-
-  drawArcTextTop(ctx, text, cx, cy, radius) {
-    ctx.save();
-    ctx.font = '800 24px "Space Grotesk", sans-serif';
-    ctx.fillStyle = PALETTE.yellow;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    const chars = text.split('');
-    const stepAngle = 2.0 * (Math.PI / 180);
-    const startAngle = -Math.PI / 2 - (chars.length * stepAngle) / 2;
-
-    for (let i = 0; i < chars.length; i++) {
-      const angle = startAngle + i * stepAngle;
-      ctx.save();
-      ctx.translate(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
-      ctx.rotate(angle + Math.PI / 2);
-      ctx.fillText(chars[i], 0, 0);
-      ctx.restore();
-    }
-    ctx.restore();
-  }
-
-  drawArcTextBottom(ctx, text, cx, cy, radius) {
-    ctx.save();
-    ctx.font = '800 22px "Space Grotesk", sans-serif';
-    ctx.fillStyle = '#ffffff';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    const chars = text.split('');
-    const stepAngle = 1.9 * (Math.PI / 180);
-    const startAngle = Math.PI / 2 + (chars.length * stepAngle) / 2;
-
-    for (let i = 0; i < chars.length; i++) {
-      const angle = startAngle - i * stepAngle;
-      ctx.save();
-      ctx.translate(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
-      ctx.rotate(angle - Math.PI / 2);
-      ctx.fillText(chars[i], 0, 0);
-      ctx.restore();
-    }
     ctx.restore();
   }
 
