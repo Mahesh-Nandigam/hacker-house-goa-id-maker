@@ -19,12 +19,12 @@ export const DIMENSIONS = {
   card: { w: 998, h: 1436 },
   pfp: { size: 1024 },
   slot: { x: 387, y: 52, w: 224, h: 46, radius: 23 },
-  photo: { x: 234, y: 360, w: 530, h: 510, rx: 265, ry: 140, inset: 10 },
-  namePlate: { x: 74, y: 890, w: 850, h: 136, radius: 32, inset: 8 },
-  rolePill: { x: 249, y: 1042, w: 500, h: 76, radius: 38 },
-  serialSlot: { cx: 499, y: 1132 },
-  hashtagSlot: { cx: 499, y: 860 },
-  qrSlot: { x: 384, y: 1180, size: 230, radius: 22 }
+  photo: { x: 234, y: 350, w: 530, h: 510, rx: 265, ry: 140, inset: 10 },
+  namePlate: { x: 74, y: 880, w: 850, h: 136, radius: 32, inset: 8 },
+  rolePill: { x: 249, y: 1032, w: 500, h: 76, radius: 38 },
+  serialSlot: { cx: 499, y: 1122 },
+  hashtagSlot: { cx: 499, y: 850 },
+  qrSlot: { x: 384, y: 1180, size: 210, radius: 20 }
 };
 
 export const EVENT = {
@@ -32,7 +32,7 @@ export const EVENT = {
   year: "2026",
   dates: "28 – 31 OCT 2026",
   place: "GOA, INDIA",
-  tagline: "4 DAYS IN GOA • 247 BUILDERS • BUILT TO SHIP",
+  tagline: "4 DAYS. ONE RHYTHM. EVERYTHING INTENTIONAL.",
   hashtag: "#FrameInGoa",
   studio: "2:47PM STUDIO"
 };
@@ -109,7 +109,7 @@ export function fitTracked(ctx, text, maxWidth, options) {
   return { size, tracking };
 }
 
-// Proportional Typographic Curved Text (Zero overlapping, smooth kerning)
+// Proportional Typographic Curved Text
 export function drawArcTextProportional(ctx, text, cx, cy, radius, startAngleCenter, inward = true, letterSpacing = 2) {
   ctx.save();
   const chars = [...text];
@@ -207,35 +207,18 @@ export function drawBarcode(ctx, text, x, y, w, h) {
   const rand = seededRandom(hash);
 
   ctx.save();
-  roundRectPath(ctx, x - 14, y - 10, w + 28, h + 20, 8);
   ctx.fillStyle = '#ffffff';
-  ctx.fill();
-  ctx.lineWidth = 1.5;
-  ctx.strokeStyle = 'rgba(1, 53, 31, 0.25)';
-  ctx.stroke();
+  ctx.fillRect(x - 6, y - 4, w + 12, h + 8);
 
-  ctx.save();
-  ctx.shadowColor = 'rgba(0, 242, 254, 0.55)';
-  ctx.shadowBlur = 6;
   ctx.fillStyle = PALETTE.greenInk;
   let curX = x;
   while (curX < x + w) {
     const barW = 1 + Math.floor(rand() * 3);
-    const gapW = 1 + Math.floor(rand() * 3);
-    const tall = rand() > 0.82;
-    const barH = tall ? h + 8 : h;
+    const gapW = 1 + Math.floor(rand() * 2);
     const drawW = Math.min(barW, x + w - curX);
-    if (drawW > 0) ctx.fillRect(curX, y - (tall ? 4 : 0), drawW, barH);
+    if (drawW > 0) ctx.fillRect(curX, y, drawW, h);
     curX += barW + gapW;
   }
-  ctx.restore();
-
-  ctx.strokeStyle = 'rgba(0, 242, 254, 0.9)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(x, y + h / 2);
-  ctx.lineTo(x + w, y + h / 2);
-  ctx.stroke();
   ctx.restore();
 }
 
@@ -313,52 +296,54 @@ export class GraphicGenerator {
     ctx.imageSmoothingQuality = 'high';
     ctx.scale(scale, scale);
 
-    // 1. Luxury Emerald Gradient Background with Cyber Lattice
+    // 1. Luxury Goan Emerald Gradient Background
     const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
-    bgGrad.addColorStop(0, '#042817');
-    bgGrad.addColorStop(0.35, '#021e11');
-    bgGrad.addColorStop(0.75, '#01160c');
-    bgGrad.addColorStop(1, '#010c07');
+    bgGrad.addColorStop(0, '#025229');
+    bgGrad.addColorStop(0.3, '#01381c');
+    bgGrad.addColorStop(0.7, '#012613');
+    bgGrad.addColorStop(1, '#01150a');
     ctx.fillStyle = bgGrad;
-    roundRectPath(ctx, 0, 0, w, h, 28);
+    roundRectPath(ctx, 0, 0, w, h, 32);
     ctx.fill();
 
-    // 2. Gold Metallic Precision Double Border
+    // 2. Gold Precision Double Border
     ctx.lineWidth = 6;
     ctx.strokeStyle = PALETTE.yellow;
-    roundRectPath(ctx, 12, 12, w - 24, h - 24, 20);
+    roundRectPath(ctx, 14, 14, w - 28, h - 28, 22);
     ctx.stroke();
 
     ctx.lineWidth = 1.5;
     ctx.strokeStyle = 'rgba(253, 211, 2, 0.45)';
-    roundRectPath(ctx, 22, 22, w - 44, h - 44, 14);
+    roundRectPath(ctx, 24, 24, w - 48, h - 48, 16);
     ctx.stroke();
 
-    // 3. Header Details
+    // 3. Top Header Details (Meaningful Studio + Date)
     ctx.save();
     ctx.font = '800 20px "JetBrains Mono", monospace';
     ctx.fillStyle = PALETTE.yellow;
-    drawTracked(ctx, '2:47PM STUDIO', 60, 115, 1.4, 'left');
+    drawTracked(ctx, '2:47PM STUDIO', 60, 115, 1.2, 'left');
 
     ctx.font = '700 18px "Space Grotesk", sans-serif';
     drawTracked(ctx, '28 – 31 OCT 2026 // GOA, INDIA', w - 60, 115, 0.6, 'right');
     ctx.restore();
 
     // 4. Main Event Wordmark: HACKER [गोवा] HOUSE
-    const titleY = 185;
+    const titleY = 180;
     this.drawTitleBlock(ctx, w / 2, titleY);
 
-    // 5. Subtitle Tagline
+    // 5. Official Subtitle Tagline
     ctx.save();
     ctx.textAlign = 'center';
     ctx.font = '700 16px "Space Grotesk", sans-serif';
-    ctx.fillStyle = 'rgba(254, 247, 230, 0.9)';
-    drawTracked(ctx, '4 DAYS IN GOA  ◆  247 BUILDERS  ◆  BUILT TO SHIP', w / 2, titleY + 68, 2.4);
+    ctx.fillStyle = 'rgba(254, 247, 230, 0.92)';
+    drawTracked(ctx, '4 DAYS. ONE RHYTHM. EVERYTHING INTENTIONAL.', w / 2, titleY + 68, 2.2);
     ctx.restore();
 
-    // 6. Holographic Cyber HUD Arch Accents (Replaced Clumsy Trees with High-Tech Graphics)
+    // 6. Photo Arch Frame
     const p = DIMENSIONS.photo;
-    this.drawCyberArchHUD(ctx, p.x, p.y, p.w, p.h);
+
+    // Elegant Tropical Palm Framing Accents
+    this.drawPalmLeavesArch(ctx, p.x, p.y, p.w, p.h);
 
     ctx.save();
     const photoBox = {
@@ -390,7 +375,7 @@ export class GraphicGenerator {
     // 7. #FrameInGoa Ribbon Banner across Arch Base
     this.drawRibbonBanner(ctx, DIMENSIONS.hashtagSlot.cx, DIMENSIONS.hashtagSlot.y, '#FrameInGoa');
 
-    // 8. Name Plate Container
+    // 8. Name Plate Container (Clean, focused, prominent)
     const np = DIMENSIONS.namePlate;
     const nameBox = {
       x: np.x + np.inset,
@@ -408,7 +393,7 @@ export class GraphicGenerator {
     ctx.stroke();
     ctx.clip();
 
-    const builderName = (state.name || 'ADA LOVELACE').toUpperCase();
+    const builderName = (state.name || 'YOUR NAME').toUpperCase();
     const fittedName = fitTracked(ctx, builderName, nameBox.w - 48, {
       family: '"Syne", "Bodoni Moda", sans-serif',
       weight: '900',
@@ -421,9 +406,9 @@ export class GraphicGenerator {
     drawTracked(ctx, builderName, nameBox.x + nameBox.w / 2, nameBox.y + nameBox.h / 2 + 3, fittedName.tracking);
     ctx.restore();
 
-    // 9. Role Badge Pill
+    // 9. Role Badge Pill (Clean, high contrast)
     const rp = DIMENSIONS.rolePill;
-    const roleStr = (state.role || 'AI ENGINEER').toUpperCase();
+    const roleStr = (state.role || 'YOUR ROLE').toUpperCase();
     ctx.save();
     roundRectPath(ctx, rp.x, rp.y, rp.w, rp.h, rp.radius);
     ctx.fillStyle = PALETTE.pink;
@@ -435,7 +420,7 @@ export class GraphicGenerator {
     const fittedRole = fitTracked(ctx, `❖  ${roleStr}  ❖`, rp.w - 30, {
       family: '"Space Grotesk", sans-serif',
       weight: '900',
-      maxSize: 38,
+      maxSize: 36,
       minSize: 18,
       tracking: 3
     });
@@ -444,29 +429,27 @@ export class GraphicGenerator {
     drawTracked(ctx, `❖  ${roleStr}  ❖`, rp.x + rp.w / 2, rp.y + rp.h / 2 + 2, fittedRole.tracking);
     ctx.restore();
 
-    // 10. Serial Line & Squad
+    // 10. Squad & Serial Pill
     const serialStr = state.serial || `#GOA-2026-${Math.abs(this.hashCode(state.name || 'BUILDER')).toString(16).toUpperCase().padStart(4, '0')}A`;
     const teamStr = (state.teamName || '').toUpperCase();
-    const fullSerial = teamStr ? `${teamStr}  ·  ${serialStr}` : serialStr;
+    const fullSerial = teamStr ? `TEAM: ${teamStr}  ·  ${serialStr}` : serialStr;
 
     ctx.save();
-    ctx.font = '700 22px "JetBrains Mono", monospace';
+    ctx.font = '700 20px "JetBrains Mono", monospace';
     ctx.textBaseline = 'middle';
-    const serialW = Math.min(measureTracked(ctx, fullSerial, 2.2) + 48, 680);
-    roundRectPath(ctx, DIMENSIONS.serialSlot.cx - serialW / 2, DIMENSIONS.serialSlot.y, serialW, 44, 22);
-    ctx.fillStyle = 'rgba(1, 53, 31, 0.9)';
+    const serialW = Math.min(measureTracked(ctx, fullSerial, 2) + 48, 720);
+    roundRectPath(ctx, DIMENSIONS.serialSlot.cx - serialW / 2, DIMENSIONS.serialSlot.y, serialW, 42, 21);
+    ctx.fillStyle = 'rgba(1, 53, 31, 0.95)';
     ctx.fill();
     ctx.lineWidth = 2;
     ctx.strokeStyle = 'rgba(253, 211, 2, 0.85)';
     ctx.stroke();
     ctx.fillStyle = PALETTE.cream;
-    drawTracked(ctx, fullSerial, DIMENSIONS.serialSlot.cx, DIMENSIONS.serialSlot.y + 22 + 1, 2.2);
+    drawTracked(ctx, fullSerial, DIMENSIONS.serialSlot.cx, DIMENSIONS.serialSlot.y + 21 + 1, 2);
     ctx.restore();
 
-    // 11. Futuristic HUD Telemetry Pods + Scannable QR Code Panel (Replaced Primitive Clip-art)
+    // 11. Bottom Scannable QR Code
     const qrP = DIMENSIONS.qrSlot;
-    this.drawCyberTelemetryFooter(ctx, 48, 1145, w - 96, 240);
-
     ctx.save();
     roundRectPath(ctx, qrP.x, qrP.y, qrP.size, qrP.size, qrP.radius);
     ctx.fillStyle = '#ffffff';
@@ -481,7 +464,7 @@ export class GraphicGenerator {
     ctx.restore();
 
     // 12. Bottom Portuguese Azulejo Mosaic Tile Band
-    this.drawAzulejoMosaicBand(ctx, 36, h - 48, w - 72, 24);
+    this.drawAzulejoMosaicBand(ctx, 36, h - 44, w - 72, 22);
 
     // 13. Top Lanyard Slot Cutout
     ctx.save();
@@ -497,7 +480,7 @@ export class GraphicGenerator {
   }
 
   // =========================================================================
-  // FORMAT B: BUILDER ID CARD - BACK (998 x 1436 px)
+  // FORMAT B: BUILDER ID CARD - BACK (998 x 1436 px) - GEN-Z HOUSE RULES
   // =========================================================================
   renderCardBack(state, scale = 1.0) {
     const canvas = document.createElement('canvas');
@@ -519,37 +502,46 @@ export class GraphicGenerator {
 
     // 1. Dark Emerald Background Base
     const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
-    bgGrad.addColorStop(0, '#042817');
-    bgGrad.addColorStop(0.35, '#021e11');
-    bgGrad.addColorStop(0.75, '#01160c');
-    bgGrad.addColorStop(1, '#010c07');
+    bgGrad.addColorStop(0, '#025229');
+    bgGrad.addColorStop(0.3, '#01381c');
+    bgGrad.addColorStop(0.7, '#012613');
+    bgGrad.addColorStop(1, '#01150a');
     ctx.fillStyle = bgGrad;
-    roundRectPath(ctx, 0, 0, w, h, 28);
+    roundRectPath(ctx, 0, 0, w, h, 32);
     ctx.fill();
 
     ctx.lineWidth = 6;
     ctx.strokeStyle = PALETTE.yellow;
-    roundRectPath(ctx, 12, 12, w - 24, h - 24, 20);
+    roundRectPath(ctx, 14, 14, w - 28, h - 28, 22);
     ctx.stroke();
 
     // 2. Header Title: HACKER [गोवा] HOUSE
-    const titleY = 135;
+    const titleY = 140;
     this.drawTitleBlock(ctx, w / 2, titleY);
 
     ctx.save();
     ctx.textAlign = 'center';
     ctx.font = '700 15px "Space Grotesk", sans-serif';
-    ctx.fillStyle = 'rgba(254, 247, 230, 0.85)';
-    drawTracked(ctx, '4 DAYS IN GOA  ◆  247 BUILDERS  ◆  BUILT TO SHIP', w / 2, titleY + 64, 2);
+    ctx.fillStyle = 'rgba(254, 247, 230, 0.9)';
+    drawTracked(ctx, '4 DAYS. ONE RHYTHM. EVERYTHING INTENTIONAL.', w / 2, titleY + 64, 2);
     ctx.restore();
 
-    // 3. Upper QR Code & Verification Block
-    const qrBoxX = 74;
-    const qrBoxY = 240;
-    const qrBoxSize = 240;
-
+    // Decorative Gold Star divider
     ctx.save();
-    roundRectPath(ctx, qrBoxX, qrBoxY, qrBoxSize, qrBoxSize, 22);
+    ctx.fillStyle = PALETTE.yellow;
+    ctx.font = '20px "Space Grotesk", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('❖', w / 2, titleY + 96);
+    ctx.restore();
+
+    // 3. Upper QR Code & Scanner Instructions Block
+    const qrBoxX = 80;
+    const qrBoxY = 270;
+    const qrBoxSize = 250;
+
+    // White QR Container
+    ctx.save();
+    roundRectPath(ctx, qrBoxX, qrBoxY, qrBoxSize, qrBoxSize + 40, 24);
     ctx.fillStyle = '#ffffff';
     ctx.fill();
     ctx.lineWidth = 3;
@@ -559,81 +551,116 @@ export class GraphicGenerator {
     if (this.qrImage) {
       ctx.drawImage(this.qrImage, qrBoxX + 12, qrBoxY + 12, qrBoxSize - 24, qrBoxSize - 24);
     }
+
+    // Barcode serial below QR
+    const serialStr = state.serial || `#GOA-2026-${Math.abs(this.hashCode(state.name || 'BUILDER')).toString(16).toUpperCase().padStart(4, '0')}A`;
+    drawBarcode(ctx, serialStr, qrBoxX + 16, qrBoxY + qrBoxSize - 6, qrBoxSize - 32, 16);
+
+    ctx.font = '700 13px "JetBrains Mono", monospace';
+    ctx.fillStyle = PALETTE.greenInk;
+    ctx.textAlign = 'center';
+    ctx.fillText(serialStr, qrBoxX + qrBoxSize / 2, qrBoxY + qrBoxSize + 26);
     ctx.restore();
 
-    const infoX = qrBoxX + qrBoxSize + 36;
+    // Right Side: SCAN ME + Explanatory Text + Sun/Boat Vector Art
+    const infoX = qrBoxX + qrBoxSize + 48;
     ctx.save();
-    ctx.font = '900 28px "Syne", sans-serif';
+    ctx.font = '900 32px "Syne", sans-serif';
     ctx.fillStyle = PALETTE.yellow;
-    drawTracked(ctx, '❖  SCAN TO VERIFY  ❖', infoX, qrBoxY + 45, 0.8, 'left');
+    ctx.textAlign = 'left';
+    ctx.fillText('❖  SCAN ME  ❖', infoX, qrBoxY + 45);
 
-    ctx.font = '600 17px "Space Grotesk", sans-serif';
-    ctx.fillStyle = '#ffffff';
-    drawTracked(ctx, 'SCAN FOR LIVE SCHEDULE,', infoX, qrBoxY + 85, 0.4, 'left');
-    drawTracked(ctx, '₹46.5L+ BOUNTY TRACKS,', infoX, qrBoxY + 115, 0.4, 'left');
-    drawTracked(ctx, 'VILLA ACCESS PASS &', infoX, qrBoxY + 145, 0.4, 'left');
-    drawTracked(ctx, 'RESIDENCY PORTAL.', infoX, qrBoxY + 175, 0.4, 'left');
+    ctx.font = '700 16px "Space Grotesk", sans-serif';
+    ctx.fillStyle = '#fefce8';
+    ctx.fillText('SCAN THIS QR CODE FOR', infoX, qrBoxY + 90);
+    ctx.fillText('SCHEDULE, ANNOUNCEMENTS,', infoX, qrBoxY + 118);
+    ctx.fillText('UPDATES & IMPORTANT', infoX, qrBoxY + 146);
+    ctx.fillText('INFORMATION.', infoX, qrBoxY + 174);
+
+    // Vector Sun & Boat Art
+    this.drawGoanSunAndSail(ctx, infoX + 120, qrBoxY + 240);
     ctx.restore();
 
-    // 4. Azulejo Tile Divider
-    this.drawAzulejoMosaicBand(ctx, 50, 510, w - 100, 20);
+    // 4. Portuguese Azulejo Floral Mosaic Ribbon Divider
+    this.drawAzulejoMosaicBand(ctx, 30, 600, w - 60, 24);
 
-    // 5. Residency Flow Protocols
-    const rulesY = 570;
-    this.drawRolePill(ctx, w / 2, rulesY, 'HOUSE PROTOCOLS');
+    // 5. Gen-Z Rules & Regulations Section
+    const rulesY = 665;
+    this.drawRolePill(ctx, w / 2, rulesY, 'RULES & REGULATIONS');
 
-    const protocols = [
-      { icon: '🌴', title: 'STAY IN FLOW', desc: 'Code, rest, and beach jams under one roof.' },
-      { icon: '⚡', title: 'BUILT TO SHIP', desc: 'A launchpad for generational AI & crypto products.' },
-      { icon: '🤝', title: 'ELEVATE SQUAD', desc: 'Collaborate fiercely, elevate each other.' },
-      { icon: '🌊', title: 'RECHARGE HARD', desc: 'Intensity by day, Goan sunsets by dusk.' },
-      { icon: '🔑', title: 'HIGH-SPEED WI-FI', desc: 'SSID: HHGOA_247_ULTRA  |  KEY: SHIP_OR_DIE' }
+    const rules = [
+      {
+        icon: '🪪',
+        text: 'THIS ID CARD IS PERSONAL AND NON-TRANSFERABLE.\nALWAYS WEAR IT DURING THE EVENT.'
+      },
+      {
+        icon: '🤝',
+        text: 'RESPECT EVERY HACKER. NO HATE, NO HARASSMENT,\nNO DISRESPECT.'
+      },
+      {
+        icon: '🔇',
+        text: 'MAINTAIN SILENCE IN SESSION ROOMS.\nKEEP THE VIBE FOCUSED.'
+      },
+      {
+        icon: '🗑️',
+        text: "KEEP THE VENUE CLEAN. USE DUSTBINS.\nLET'S LEAVE NO TRACE."
+      },
+      {
+        icon: '🛡️',
+        text: "FOLLOW ALL SAFETY GUIDELINES.\nORGANIZERS' DECISIONS ARE FINAL."
+      }
     ];
 
     ctx.save();
-    let curY = rulesY + 60;
-    protocols.forEach(item => {
-      ctx.font = '24px "Space Grotesk", sans-serif';
-      ctx.fillText(item.icon, 70, curY);
+    let curY = rulesY + 65;
+    rules.forEach((item) => {
+      // Icon Box
+      ctx.font = '26px "Space Grotesk", sans-serif';
+      ctx.fillText(item.icon, 80, curY + 10);
 
-      ctx.font = '800 17px "JetBrains Mono", monospace';
-      ctx.fillStyle = PALETTE.yellow;
-      ctx.fillText(item.title + ':', 115, curY - 3);
+      // Text Lines
+      ctx.font = '700 16px "Space Grotesk", sans-serif';
+      ctx.fillStyle = 'rgba(254, 252, 232, 0.95)';
+      ctx.textAlign = 'left';
 
-      ctx.font = '500 16px "Space Grotesk", sans-serif';
-      ctx.fillStyle = '#ffffff';
-      ctx.fillText(item.desc, 115, curY + 20);
+      const lines = item.text.split('\n');
+      ctx.fillText(lines[0], 130, curY);
+      if (lines[1]) {
+        ctx.font = '500 15px "Space Grotesk", sans-serif';
+        ctx.fillStyle = 'rgba(254, 252, 232, 0.75)';
+        ctx.fillText(lines[1], 130, curY + 24);
+      }
 
-      curY += 58;
+      // Subtle dashed rule divider
+      ctx.strokeStyle = 'rgba(253, 211, 2, 0.2)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(130, curY + 42);
+      ctx.lineTo(w - 380, curY + 42);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      curY += 72;
     });
     ctx.restore();
 
-    // 6. Laser Barcode & Hash
-    const serialStr = state.serial || `#GOA-2026-${Math.abs(this.hashCode(state.name || 'BUILDER')).toString(16).toUpperCase().padStart(4, '0')}A`;
-    drawBarcode(ctx, serialStr, 70, 940, w - 140, 28);
+    // Beach Vibe Vector Elements on Bottom Right (Palm, Umbrella, Scooter)
+    this.drawBeachVibeIllustration(ctx, w - 240, h - 220);
 
+    // 6. Yellow Footer Bar across full card base
     ctx.save();
-    ctx.font = '700 15px "JetBrains Mono", monospace';
     ctx.fillStyle = PALETTE.yellow;
-    ctx.textAlign = 'center';
-    ctx.fillText(`SERIAL HASH: ${serialStr}  •  VERIFIED 2:47PM RESIDENT`, w / 2, 995);
-    ctx.restore();
+    ctx.fillRect(14, h - 80, w - 28, 66);
 
-    // 7. Bottom Gold Banner
-    const bannerY = h - 75;
-    ctx.save();
-    roundRectPath(ctx, 60, bannerY - 26, w - 120, 52, 14);
-    ctx.fillStyle = PALETTE.yellow;
-    ctx.fill();
-
-    ctx.font = '900 22px "Syne", sans-serif';
+    ctx.font = '900 24px "Syne", sans-serif';
     ctx.fillStyle = PALETTE.greenInk;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('GOA, INDIA  •  28 – 31 OCT 2026  •  247 RESIDENTS', w / 2, bannerY);
+    ctx.fillText('❖  GOA, INDIA  •  28 – 31 OCT 2026  ❖', w / 2, h - 47);
     ctx.restore();
 
-    // 8. Top Lanyard Slot Cutout
+    // 7. Top Lanyard Slot Cutout
     ctx.save();
     ctx.globalCompositeOperation = 'destination-out';
     const s = DIMENSIONS.slot;
@@ -647,7 +674,7 @@ export class GraphicGenerator {
   }
 
   // =========================================================================
-  // FORMAT A: PFP FRAME OVERLAY (1024 x 1024 px) - GOAT EDITION
+  // FORMAT A: PFP FRAME OVERLAY (1024 x 1024 px)
   // =========================================================================
   renderPFP(state, scale = 1.0) {
     const canvas = document.createElement('canvas');
@@ -675,98 +702,64 @@ export class GraphicGenerator {
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, s, s);
 
-    // High-tech Cyber HUD Corner Accents
+    // Corner Ambient Flourishes
     this.drawCornerCyberHUD(ctx, s);
 
-    // 2. Avatar Photo Circle Clip
+    // 2. User Avatar Photo (Clipped Circle)
     ctx.save();
     ctx.beginPath();
     ctx.arc(center, center, innerR, 0, Math.PI * 2);
-    ctx.closePath();
     ctx.clip();
+    ctx.fillStyle = PALETTE.cream;
+    ctx.fill();
 
-    ctx.fillStyle = PALETTE.greenInk;
-    ctx.fillRect(0, 0, s, s);
+    const photoBox = {
+      x: center - innerR,
+      y: center - innerR,
+      w: innerR * 2,
+      h: innerR * 2
+    };
 
     if (this.userImage) {
-      const box = {
-        x: center - innerR,
-        y: center - innerR,
-        w: innerR * 2,
-        h: innerR * 2
-      };
-      drawCoveredImage(ctx, this.userImage, box, state);
+      drawCoveredImage(ctx, this.userImage, photoBox, state);
     } else {
-      this.drawAvatarSilhouette(ctx, center, center, innerR * 0.7);
+      this.drawAvatarSilhouette(ctx, center, center, 150);
     }
     ctx.restore();
 
-    // 3. Luxurious Dual-Ring Bezel System
+    // 3. Neon Outer Glow Rings
     ctx.save();
-    ctx.shadowColor = 'rgba(16, 185, 129, 0.85)';
+    ctx.shadowColor = 'rgba(0, 242, 254, 0.6)';
     ctx.shadowBlur = 24;
     ctx.lineWidth = 14;
     ctx.strokeStyle = '#10b981';
     ctx.beginPath();
-    ctx.arc(center, center, innerR + 7, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
-
-    const outerTrackInnerR = innerR + 14;
-    const outerTrackOuterR = 475;
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(center, center, outerTrackOuterR, 0, Math.PI * 2);
-    ctx.arc(center, center, outerTrackInnerR, 0, Math.PI * 2, true);
-    ctx.fillStyle = 'rgba(1, 38, 22, 0.88)';
-    ctx.fill();
-
-    // Outer Gold Precision Rail
-    ctx.lineWidth = 5;
-    ctx.strokeStyle = PALETTE.yellow;
-    ctx.beginPath();
-    ctx.arc(center, center, outerTrackOuterR, 0, Math.PI * 2);
+    ctx.arc(center, center, innerR + 10, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Inner Gold Precision Rail
     ctx.lineWidth = 3;
     ctx.strokeStyle = PALETTE.yellow;
     ctx.beginPath();
-    ctx.arc(center, center, outerTrackInnerR, 0, Math.PI * 2);
+    ctx.arc(center, center, innerR + 24, 0, Math.PI * 2);
     ctx.stroke();
-
-    // Portuguese Azulejo dot accents around outer rim
-    for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 16) {
-      const dotX = center + (outerTrackOuterR - 8) * Math.cos(angle);
-      const dotY = center + (outerTrackOuterR - 8) * Math.sin(angle);
-      ctx.fillStyle = 'rgba(253, 211, 2, 0.6)';
-      ctx.beginPath();
-      ctx.arc(dotX, dotY, 2.5, 0, Math.PI * 2);
-      ctx.fill();
-    }
     ctx.restore();
 
-    // 4. Proportional Curved Typography - TOP ARC
+    // 4. Proportional Curved Top Typography
     ctx.save();
-    ctx.font = '900 32px "Syne", sans-serif';
-    ctx.fillStyle = PALETTE.yellow;
-    ctx.shadowColor = 'rgba(253, 211, 2, 0.4)';
-    ctx.shadowBlur = 10;
-    drawArcTextProportional(ctx, "★  HACKER HOUSE GOA 2026  ★", center, center, 415, -Math.PI / 2, true, 4);
-    ctx.restore();
-
-    // 5. Proportional Curved Typography - BOTTOM ARC
-    ctx.save();
-    ctx.font = '700 24px "Space Grotesk", sans-serif';
+    ctx.font = '900 32px "Syne", "Bodoni Moda", sans-serif';
     ctx.fillStyle = '#ffffff';
-    drawArcTextProportional(ctx, "28 – 31 OCT 2026  ◆  247 BUILDERS", center, center, 420, Math.PI / 2, false, 3.5);
+    ctx.shadowColor = 'rgba(0, 242, 254, 0.8)';
+    ctx.shadowBlur = 10;
+    drawArcTextProportional(ctx, 'HACKER HOUSE GOA · 28-31 OCT', center, center, innerR + 68, -Math.PI / 2, true, 4);
     ctx.restore();
 
-    // 6. Top Studio Badge Header
+    // Top Studio Pill
     ctx.save();
-    roundRectPath(ctx, center - 130, 18, 260, 36, 18);
-    ctx.fillStyle = 'rgba(1, 53, 31, 0.95)';
+    const pillW = 260;
+    const pillH = 34;
+    const pillY = 36;
+    roundRectPath(ctx, center - pillW / 2, pillY, pillW, pillH, 17);
+    ctx.fillStyle = 'rgba(2, 103, 51, 0.95)';
     ctx.fill();
     ctx.lineWidth = 1.5;
     ctx.strokeStyle = PALETTE.yellow;
@@ -776,18 +769,35 @@ export class GraphicGenerator {
     ctx.fillStyle = PALETTE.yellow;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    drawTracked(ctx, '2:47PM STUDIO // GOA', center, 36, 1.8, 'center');
+    ctx.fillText('2:47PM STUDIO // HHGOA.COM', center, pillY + pillH / 2 + 1);
     ctx.restore();
 
-    // 7. Floating Gold Metallic Ribbon Banner
-    this.drawRibbonBanner(ctx, center, 860, '#FrameInGoa', 320, 54);
-
-    // 8. Lower Subtitle Flex Note
+    // 5. Proportional Curved Bottom Typography
     ctx.save();
-    ctx.font = '800 14px "JetBrains Mono", monospace';
-    ctx.fillStyle = 'rgba(254, 247, 230, 0.75)';
+    ctx.font = '800 24px "Space Grotesk", sans-serif';
+    ctx.fillStyle = PALETTE.yellow;
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+    ctx.shadowBlur = 8;
+    drawArcTextProportional(ctx, '◆  247 BUILDERS  ·  GOA RESIDENCY  ◆', center, center, innerR + 56, Math.PI / 2, false, 3.5);
+    ctx.restore();
+
+    // Bottom Badge Plaque
+    ctx.save();
+    const bannerW = 460;
+    const bannerH = 56;
+    const bannerY = 860;
+    roundRectPath(ctx, center - bannerW / 2, bannerY, bannerW, bannerH, 28);
+    ctx.fillStyle = PALETTE.pink;
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = PALETTE.yellow;
+    ctx.stroke();
+
+    ctx.font = '900 24px "Syne", sans-serif';
+    ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
-    drawTracked(ctx, 'BUILT TO SHIP  •  ZERO LOGIN', center, 960, 2, 'center');
+    ctx.textBaseline = 'middle';
+    ctx.fillText('HACKER HOUSE GOA 2026', center, bannerY + bannerH / 2);
     ctx.restore();
 
     ctx.restore();
@@ -795,367 +805,229 @@ export class GraphicGenerator {
   }
 
   // =========================================================================
-  // 16:9 X POST SHOWCASE (2400 x 1350 px)
+  // 16:9 SHOWCASE FOR X POSTS (2400 x 1350 px)
   // =========================================================================
   renderXPostShowcase(state) {
     const canvas = document.createElement('canvas');
-    const w = 2400;
-    const h = 1350;
-    canvas.width = w;
-    canvas.height = h;
+    canvas.width = 2400;
+    canvas.height = 1350;
     const ctx = canvas.getContext('2d');
 
-    const bgGrad = ctx.createRadialGradient(w / 2, h / 2, 300, w / 2, h / 2, w / 2);
-    bgGrad.addColorStop(0, '#042817');
-    bgGrad.addColorStop(0.5, '#02180e');
-    bgGrad.addColorStop(1, '#010804');
+    const front = this.renderCardFront(state, 0.82);
+    const back = this.renderCardBack(state, 0.82);
+
+    // Background
+    const bgGrad = ctx.createLinearGradient(0, 0, 2400, 1350);
+    bgGrad.addColorStop(0, '#01150a');
+    bgGrad.addColorStop(0.5, '#022915');
+    bgGrad.addColorStop(1, '#011008');
     ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, w, h);
+    ctx.fillRect(0, 0, 2400, 1350);
 
-    ctx.save();
-    ctx.font = '800 28px "JetBrains Mono", monospace';
+    // Title
+    ctx.font = '900 64px "Syne", sans-serif';
     ctx.fillStyle = PALETTE.yellow;
-    ctx.fillText('2:47PM STUDIO', 90, 85);
-
-    ctx.textAlign = 'right';
-    ctx.font = '700 24px "Space Grotesk", sans-serif';
-    ctx.fillStyle = PALETTE.yellow;
-    ctx.fillText('HACKER HOUSE GOA 2026 // #FrameInGoa', w - 90, 85);
-    ctx.restore();
-
-    const frontCanvas = this.renderCardFront(state, 0.74);
-    const backCanvas = this.renderCardBack(state, 0.74);
-
-    const cardW = frontCanvas.width;
-    const cardH = frontCanvas.height;
-    const cardY = (h - cardH) / 2 + 30;
-    const frontX = 360;
-    const backX = 1300;
-
-    ctx.save();
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
-    ctx.shadowBlur = 60;
-    ctx.shadowOffsetX = -20;
-    ctx.shadowOffsetY = 30;
-    ctx.drawImage(frontCanvas, frontX, cardY, cardW, cardH);
-    ctx.restore();
-
-    ctx.save();
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
-    ctx.shadowBlur = 60;
-    ctx.shadowOffsetX = 20;
-    ctx.shadowOffsetY = 30;
-    ctx.drawImage(backCanvas, backX, cardY, cardW, cardH);
-    ctx.restore();
-
-    // FRONT / BACK tags
-    ctx.save();
-    ctx.font = '800 16px "JetBrains Mono", monospace';
     ctx.textAlign = 'center';
-    ctx.fillStyle = 'rgba(254, 247, 230, 0.65)';
-    drawTracked(ctx, 'FRONT', frontX + cardW / 2, cardY + cardH + 34, 3, 'center');
-    drawTracked(ctx, 'BACK', backX + cardW / 2, cardY + cardH + 34, 3, 'center');
-    ctx.restore();
+    ctx.fillText('HACKER HOUSE GOA 2026', 1200, 110);
 
-    // Soft vignette
+    ctx.font = '700 24px "Space Grotesk", sans-serif';
+    ctx.fillStyle = 'rgba(254, 252, 232, 0.85)';
+    ctx.fillText('OFFICIAL RESIDENCY PASS  •  28 – 31 OCT 2026  •  @247PMSTUDIO', 1200, 160);
+
+    // Draw Front & Back Cards Side-by-Side with Shadow
+    const cardY = 210;
     ctx.save();
-    const vignette = ctx.createRadialGradient(w / 2, h / 2, h * 0.35, w / 2, h / 2, h * 0.75);
-    vignette.addColorStop(0, 'rgba(0,0,0,0)');
-    vignette.addColorStop(1, 'rgba(0,0,0,0.45)');
-    ctx.fillStyle = vignette;
-    ctx.fillRect(0, 0, w, h);
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+    ctx.shadowBlur = 40;
+    ctx.shadowOffsetY = 20;
+
+    ctx.drawImage(front, 320, cardY);
+    ctx.drawImage(back, 1260, cardY);
     ctx.restore();
 
     return canvas;
   }
 
-  // =========================================================================
-  // HIGH-TECH CYBER HUD & VECTOR GRAPHICS (REPLACES CLUMSY CLIPART)
-  // =========================================================================
-
+  // Helper Drawing Routines
   drawTitleBlock(ctx, cx, cy) {
     ctx.save();
-    // "HACKER"
-    ctx.font = '900 62px "Bodoni Moda", "Syne", serif';
-    ctx.fillStyle = PALETTE.yellow;
-    ctx.textAlign = 'right';
-    ctx.fillText('HACKER', cx - 95, cy + 20);
-
-    // Glowing Hot-Pink Box with Hindi "गोवा"
-    const boxW = 160;
-    const boxH = 68;
-    const boxX = cx - boxW / 2;
-    const boxY = cy - 34;
-
-    ctx.shadowColor = 'rgba(235, 4, 113, 0.75)';
-    ctx.shadowBlur = 24;
-    ctx.fillStyle = PALETTE.pink;
-    roundRectPath(ctx, boxX, boxY, boxW, boxH, 16);
-    ctx.fill();
-
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = PALETTE.yellow;
-    ctx.stroke();
-
-    ctx.shadowBlur = 0;
-    ctx.font = '900 48px "Syne", sans-serif';
-    ctx.fillStyle = PALETTE.yellow;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('गोवा', cx, cy - 1);
 
-    // "HOUSE"
-    ctx.font = '900 62px "Bodoni Moda", "Syne", serif';
+    const textHacker = 'HACKER';
+    const textHouse = 'HOUSE';
+    const textGoa = 'गोवा';
+
+    ctx.font = '900 68px "Bodoni Moda", "Syne", serif';
+    const wHacker = ctx.measureText(textHacker).width;
+    const wHouse = ctx.measureText(textHouse).width;
+
+    ctx.font = '900 40px "Syne", sans-serif';
+    const wGoaBox = 110;
+    const hGoaBox = 54;
+    const totalW = wHacker + wGoaBox + wHouse + 40;
+
+    let curX = cx - totalW / 2;
+
+    // HACKER
+    ctx.font = '900 68px "Bodoni Moda", "Syne", serif';
     ctx.fillStyle = PALETTE.yellow;
     ctx.textAlign = 'left';
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillText('HOUSE', cx + 95, cy + 20);
+    ctx.fillText(textHacker, curX, cy);
+    curX += wHacker + 20;
 
+    // [गोवा] Neon Pink Pill
+    ctx.save();
+    roundRectPath(ctx, curX, cy - hGoaBox / 2, wGoaBox, hGoaBox, 14);
+    ctx.fillStyle = PALETTE.pink;
+    ctx.fill();
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = PALETTE.yellow;
+    ctx.stroke();
+
+    ctx.font = '800 32px sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.fillText(textGoa, curX + wGoaBox / 2, cy + 2);
+    ctx.restore();
+
+    curX += wGoaBox + 20;
+
+    // HOUSE
+    ctx.font = '900 68px "Bodoni Moda", "Syne", serif';
+    ctx.fillStyle = PALETTE.yellow;
+    ctx.textAlign = 'left';
+    ctx.fillText(textHouse, curX, cy);
     ctx.restore();
   }
 
-  // Ultra-Cool Cyber Circuit HUD around Arch
-  drawCyberArchHUD(ctx, px, py, pw, ph) {
+  drawPalmLeavesArch(ctx, x, y, w, h) {
     ctx.save();
-
-    // 1. Left Side Holographic Cyber PCB Traces
-    ctx.strokeStyle = 'rgba(0, 242, 254, 0.75)';
+    ctx.strokeStyle = 'rgba(253, 211, 2, 0.35)';
     ctx.lineWidth = 2;
-
-    // Left circuit wing 1
+    // Subtle Goan palm contour
     ctx.beginPath();
-    ctx.moveTo(px - 10, py + 80);
-    ctx.lineTo(px - 60, py + 80);
-    ctx.lineTo(px - 110, py + 140);
-    ctx.lineTo(px - 110, py + 260);
-    ctx.lineTo(px - 70, py + 300);
+    ctx.arc(x - 30, y + 200, 80, -Math.PI / 3, Math.PI / 3);
     ctx.stroke();
 
-    // Left circuit wing 2
-    ctx.strokeStyle = 'rgba(253, 211, 2, 0.65)';
     ctx.beginPath();
-    ctx.moveTo(px - 10, py + 180);
-    ctx.lineTo(px - 80, py + 180);
-    ctx.lineTo(px - 130, py + 230);
-    ctx.lineTo(px - 130, py + 380);
+    ctx.arc(x + w + 30, y + 200, 80, (2 * Math.PI) / 3, (4 * Math.PI) / 3);
     ctx.stroke();
-
-    // Glowing nodes on left circuits
-    this.drawGlowNode(ctx, px - 110, py + 260, '#00f2fe');
-    this.drawGlowNode(ctx, px - 130, py + 380, '#fdd302');
-    this.drawGlowNode(ctx, px - 70, py + 300, '#10b981');
-
-    // Left Vertical Cyber Metadata
-    ctx.save();
-    ctx.translate(px - 145, py + 220);
-    ctx.rotate(-Math.PI / 2);
-    ctx.font = '800 13px "JetBrains Mono", monospace';
-    ctx.fillStyle = 'rgba(0, 242, 254, 0.85)';
-    ctx.textAlign = 'center';
-    drawTracked(ctx, 'LAT: 15.4989° N // GOA_NODE_01', 0, 0, 1.8, 'center');
     ctx.restore();
+  }
 
-    // 2. Right Side Holographic Cyber PCB Traces
-    ctx.strokeStyle = 'rgba(0, 242, 254, 0.75)';
+  drawGoanSunAndSail(ctx, cx, cy) {
+    ctx.save();
+    // Sun
+    ctx.fillStyle = PALETTE.yellow;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 32, Math.PI, 0);
+    ctx.fill();
+
+    // Waves
+    ctx.strokeStyle = PALETTE.yellow;
     ctx.lineWidth = 2;
-
-    // Right circuit wing 1
     ctx.beginPath();
-    ctx.moveTo(px + pw + 10, py + 80);
-    ctx.lineTo(px + pw + 60, py + 80);
-    ctx.lineTo(px + pw + 110, py + 140);
-    ctx.lineTo(px + pw + 110, py + 260);
-    ctx.lineTo(px + pw + 70, py + 300);
+    ctx.moveTo(cx - 60, cy + 8);
+    ctx.lineTo(cx + 60, cy + 8);
+    ctx.moveTo(cx - 40, cy + 18);
+    ctx.lineTo(cx + 40, cy + 18);
     ctx.stroke();
 
-    // Right circuit wing 2
-    ctx.strokeStyle = 'rgba(253, 211, 2, 0.65)';
+    // Sailboat
+    ctx.fillStyle = '#ffffff';
     ctx.beginPath();
-    ctx.moveTo(px + pw + 10, py + 180);
-    ctx.lineTo(px + pw + 80, py + 180);
-    ctx.lineTo(px + pw + 130, py + 230);
-    ctx.lineTo(px + pw + 130, py + 380);
-    ctx.stroke();
-
-    // Glowing nodes on right circuits
-    this.drawGlowNode(ctx, px + pw + 110, py + 260, '#00f2fe');
-    this.drawGlowNode(ctx, px + pw + 130, py + 380, '#fdd302');
-    this.drawGlowNode(ctx, px + pw + 70, py + 300, '#10b981');
-
-    // Right Vertical Cyber Metadata
-    ctx.save();
-    ctx.translate(px + pw + 145, py + 220);
-    ctx.rotate(Math.PI / 2);
-    ctx.font = '800 13px "JetBrains Mono", monospace';
-    ctx.fillStyle = 'rgba(253, 211, 2, 0.85)';
-    ctx.textAlign = 'center';
-    drawTracked(ctx, 'LNG: 73.8278° E // VIP_ACCESS', 0, 0, 1.8, 'center');
+    ctx.moveTo(cx - 80, cy + 4);
+    ctx.lineTo(cx - 70, cy - 24);
+    ctx.lineTo(cx - 65, cy + 4);
+    ctx.closePath();
+    ctx.fill();
     ctx.restore();
+  }
 
-    // 3. Futuristic HUD Bracket Ticks around Arch
+  drawBeachVibeIllustration(ctx, cx, cy) {
+    ctx.save();
+    // Palm tree vector line
+    ctx.strokeStyle = 'rgba(254, 252, 232, 0.85)';
+    ctx.lineWidth = 2.5;
+
+    // Palm Trunk
+    ctx.beginPath();
+    ctx.moveTo(cx + 100, cy + 160);
+    ctx.quadraticCurveTo(cx + 80, cy + 60, cx + 110, cy - 40);
+    ctx.stroke();
+
+    // Palm Fronds
+    const fx = cx + 110;
+    const fy = cy - 40;
+    [-0.6, -0.2, 0.2, 0.6, 1.0].forEach(angle => {
+      ctx.beginPath();
+      ctx.moveTo(fx, fy);
+      ctx.quadraticCurveTo(fx + Math.cos(angle) * 70, fy - 30 + Math.sin(angle) * 50, fx + Math.cos(angle) * 110, fy + Math.sin(angle) * 70);
+      ctx.stroke();
+    });
+
+    // Beach Umbrella
+    ctx.fillStyle = PALETTE.pink;
+    ctx.beginPath();
+    ctx.arc(cx - 40, cy + 80, 44, Math.PI, 0);
+    ctx.fill();
+
     ctx.strokeStyle = PALETTE.yellow;
     ctx.lineWidth = 3;
-
-    // Top Arch Crown HUD
     ctx.beginPath();
-    ctx.arc(px + pw / 2, py + 120, 290, -Math.PI * 0.75, -Math.PI * 0.25);
+    ctx.moveTo(cx - 40, cy + 80);
+    ctx.lineTo(cx - 30, cy + 160);
     ctx.stroke();
 
-    // Micro crosshairs
-    this.drawCrosshair(ctx, px + 20, py + 20);
-    this.drawCrosshair(ctx, px + pw - 20, py + 20);
-    this.drawCrosshair(ctx, px - 25, py + ph - 20);
-    this.drawCrosshair(ctx, px + pw + 25, py + ph - 20);
-
-    ctx.restore();
-  }
-
-  // Futuristic HUD Telemetry Pod flanking QR Code (Replaced tiny bungalows)
-  drawCyberTelemetryFooter(ctx, x, y, width, height) {
-    ctx.save();
-
-    // Left HUD Telemetry Pod
-    const leftPodW = 270;
-    const podH = 180;
-    const podY = y + 25;
-
-    roundRectPath(ctx, x + 20, podY, leftPodW, podH, 16);
-    ctx.fillStyle = 'rgba(1, 38, 22, 0.85)';
+    // Pink Scooter
+    ctx.fillStyle = PALETTE.pink;
+    roundRectPath(ctx, cx - 120, cy + 130, 65, 24, 10);
     ctx.fill();
-    ctx.lineWidth = 1.5;
-    ctx.strokeStyle = 'rgba(0, 242, 254, 0.4)';
-    ctx.stroke();
 
-    // Left Pod Header
-    ctx.font = '800 12px "JetBrains Mono", monospace';
-    ctx.fillStyle = PALETTE.cyan;
-    drawTracked(ctx, '❖ AUTH MATRIX', x + 40, podY + 30, 1.2, 'left');
-
-    ctx.font = '600 14px "Space Grotesk", sans-serif';
     ctx.fillStyle = '#ffffff';
-    drawTracked(ctx, 'STATUS: CRACKED', x + 40, podY + 62, 0.5, 'left');
-    drawTracked(ctx, 'BOUNTY: ₹46.5L+', x + 40, podY + 92, 0.5, 'left');
-    drawTracked(ctx, 'NODE: HH_NORTH_GOA', x + 40, podY + 122, 0.5, 'left');
-
-    // Left Equalizer Pulse Bars
-    for (let i = 0; i < 8; i++) {
-      const barH = 10 + (i % 3) * 12 + ((i * 7) % 15);
-      ctx.fillStyle = i % 2 === 0 ? PALETTE.cyan : PALETTE.yellow;
-      roundRectPath(ctx, x + 40 + i * 16, podY + 155 - barH, 8, barH, 3);
-      ctx.fill();
-    }
-
-    // Right HUD Telemetry Pod
-    const rightPodX = x + width - leftPodW - 20;
-    roundRectPath(ctx, rightPodX, podY, leftPodW, podH, 16);
-    ctx.fillStyle = 'rgba(1, 38, 22, 0.85)';
+    ctx.beginPath();
+    ctx.arc(cx - 110, cy + 155, 12, 0, Math.PI * 2);
+    ctx.arc(cx - 65, cy + 155, 12, 0, Math.PI * 2);
     ctx.fill();
-    ctx.lineWidth = 1.5;
-    ctx.strokeStyle = 'rgba(253, 211, 2, 0.4)';
-    ctx.stroke();
-
-    // Right Pod Header
-    ctx.font = '800 12px "JetBrains Mono", monospace';
-    ctx.fillStyle = PALETTE.yellow;
-    drawTracked(ctx, '❖ RESIDENCY PROTOCOL', rightPodX + 20, podY + 30, 1.2, 'left');
-
-    ctx.font = '600 14px "Space Grotesk", sans-serif';
-    ctx.fillStyle = '#ffffff';
-    drawTracked(ctx, 'BUILDERS: 247 SQUAD', rightPodX + 20, podY + 62, 0.5, 'left');
-    drawTracked(ctx, 'FREQ: 2.47 GHz ULTRA', rightPodX + 20, podY + 92, 0.5, 'left');
-    drawTracked(ctx, 'ENCRYPT: 256-BIT VIP', rightPodX + 20, podY + 122, 0.5, 'left');
-
-    // Right Equalizer Pulse Bars
-    for (let i = 0; i < 8; i++) {
-      const barH = 8 + ((i * 5) % 18) + (i % 2) * 10;
-      ctx.fillStyle = i % 2 === 0 ? PALETTE.yellow : PALETTE.pink;
-      roundRectPath(ctx, rightPodX + 20 + i * 16, podY + 155 - barH, 8, barH, 3);
-      ctx.fill();
-    }
-
-    // Glowing cyan connecting rail underneath QR
-    ctx.strokeStyle = 'rgba(0, 242, 254, 0.6)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(x + 20 + leftPodW, podY + podH / 2);
-    ctx.lineTo(x + 360, podY + podH / 2);
-    ctx.moveTo(x + width - 360, podY + podH / 2);
-    ctx.lineTo(rightPodX, podY + podH / 2);
-    ctx.stroke();
 
     ctx.restore();
   }
 
-  drawGlowNode(ctx, x, y, color) {
-    ctx.save();
-    ctx.shadowColor = color;
-    ctx.shadowBlur = 12;
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(x, y, 5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  drawCrosshair(ctx, x, y) {
-    ctx.save();
-    ctx.strokeStyle = 'rgba(253, 211, 2, 0.7)';
-    ctx.lineWidth = 1.5;
-    const len = 8;
-    ctx.beginPath();
-    ctx.moveTo(x - len, y);
-    ctx.lineTo(x + len, y);
-    ctx.moveTo(x, y - len);
-    ctx.lineTo(x, y + len);
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  // High-Tech Cyber Corner HUD for PFP
   drawCornerCyberHUD(ctx, size) {
     ctx.save();
     ctx.strokeStyle = 'rgba(0, 242, 254, 0.4)';
     ctx.lineWidth = 2;
 
     const len = 45;
-    // Top-Left HUD
     ctx.beginPath();
     ctx.moveTo(30, 30 + len);
     ctx.lineTo(30, 30);
     ctx.lineTo(30 + len, 30);
     ctx.stroke();
-    this.drawCrosshair(ctx, 30, 30);
 
-    // Top-Right HUD
     ctx.beginPath();
     ctx.moveTo(size - 30 - len, 30);
     ctx.lineTo(size - 30, 30);
     ctx.lineTo(size - 30, 30 + len);
     ctx.stroke();
-    this.drawCrosshair(ctx, size - 30, 30);
 
-    // Bottom-Left HUD
     ctx.beginPath();
     ctx.moveTo(30, size - 30 - len);
     ctx.lineTo(30, size - 30);
     ctx.lineTo(30 + len, size - 30);
     ctx.stroke();
-    this.drawCrosshair(ctx, 30, size - 30);
 
-    // Bottom-Right HUD
     ctx.beginPath();
     ctx.moveTo(size - 30 - len, size - 30);
     ctx.lineTo(size - 30, size - 30);
     ctx.lineTo(size - 30, size - 30 - len);
     ctx.stroke();
-    this.drawCrosshair(ctx, size - 30, size - 30);
-
     ctx.restore();
   }
 
   drawRibbonBanner(ctx, cx, cy, text, w = 280, h = 48) {
     ctx.save();
-
     const tailW = 16;
     ctx.fillStyle = '#b8930a';
     ctx.beginPath();
@@ -1172,8 +1044,6 @@ export class GraphicGenerator {
     ctx.closePath();
     ctx.fill();
 
-    ctx.shadowColor = 'rgba(253, 211, 2, 0.55)';
-    ctx.shadowBlur = 18;
     const grad = ctx.createLinearGradient(cx, cy - h / 2, cx, cy + h / 2);
     grad.addColorStop(0, '#fff4b0');
     grad.addColorStop(0.45, PALETTE.yellow);
@@ -1181,16 +1051,8 @@ export class GraphicGenerator {
     roundRectPath(ctx, cx - w / 2, cy - h / 2, w, h, h / 2);
     ctx.fillStyle = grad;
     ctx.fill();
-    ctx.shadowBlur = 0;
     ctx.lineWidth = 2;
     ctx.strokeStyle = 'rgba(1, 53, 31, 0.4)';
-    ctx.stroke();
-
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(cx - w / 2 + 14, cy - h / 2 + 6);
-    ctx.lineTo(cx + w / 2 - 14, cy - h / 2 + 6);
     ctx.stroke();
 
     ctx.font = '900 22px "Syne", sans-serif';
@@ -1203,10 +1065,7 @@ export class GraphicGenerator {
 
   drawRolePill(ctx, cx, cy, text) {
     ctx.save();
-    let fontSize = 20;
-    ctx.font = `900 ${fontSize}px "Space Grotesk", sans-serif`;
-    let textW = ctx.measureText(text.toUpperCase()).width;
-    const pillW = Math.max(textW + 80, 260);
+    const pillW = 380;
     const pillH = 50;
 
     roundRectPath(ctx, cx - pillW / 2, cy - pillH / 2, pillW, pillH, pillH / 2);
@@ -1216,6 +1075,7 @@ export class GraphicGenerator {
     ctx.strokeStyle = PALETTE.yellow;
     ctx.stroke();
 
+    ctx.font = '900 20px "Space Grotesk", sans-serif';
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -1225,8 +1085,7 @@ export class GraphicGenerator {
 
   drawAzulejoMosaicBand(ctx, x, y, width, height) {
     ctx.save();
-    const tileSize = height;
-    const count = Math.round(width / tileSize);
+    const count = Math.round(width / height);
     const step = width / count;
 
     ctx.strokeStyle = 'rgba(253, 211, 2, 0.5)';
@@ -1265,13 +1124,6 @@ export class GraphicGenerator {
       ctx.arc(0, 0, height * 0.36, 0, Math.PI * 2);
       ctx.stroke();
       ctx.restore();
-
-      ctx.strokeStyle = 'rgba(253, 211, 2, 0.35)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(tx, y);
-      ctx.lineTo(tx, y + height);
-      ctx.stroke();
     }
     ctx.restore();
   }
