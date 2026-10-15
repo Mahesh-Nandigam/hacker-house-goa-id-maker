@@ -1,4 +1,11 @@
-# Hacker House Goa 2026 - ID & PFP Generator
+# Hacker House Goa ID Maker
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Website-brightgreen?style=for-the-badge&logo=vercel)](https://hacker-house-goa-id-maker.vercel.app)
+
+**🔗 Live URL:** [https://hacker-house-goa-id-maker.vercel.app](https://hacker-house-goa-id-maker.vercel.app)
+
+---
+
 
 Client-side badge and profile frame generator built for Hacker House Goa 2026. Generates high-resolution builder identification passes, circular avatar overlays, and 16:9 social showcase cards with real-time 3D orbit controls.
 
